@@ -15,7 +15,7 @@ export default function Footer() {
           <div>
             <Wordmark tone="cream" />
             <p className="mt-4 max-w-[30ch] text-cream/60">
-              {profile.role} em {profile.location}. Disponível para projetos novos.
+              {profile.role}. Disponível para projetos novos.
             </p>
           </div>
 
