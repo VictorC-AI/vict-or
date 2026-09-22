@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { categoryLabel, projects, type Category, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
 import ProjectDialog from './ProjectDialog'
+import { asset } from '../lib/asset'
 
 type Filter = 'tudo' | Category
 
@@ -110,8 +111,8 @@ export default function Work() {
                 >
                   {p.image ? (
                     <img
-                      src={p.image}
-                      alt=""
+                      src={asset(p.image)}
+                      alt={`Tela do projeto ${p.title}`}
                       loading="lazy"
                       className={`w-full object-cover ${
                         featured ? 'aspect-[16/9]' : 'aspect-[160/112]'

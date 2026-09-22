@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { categoryLabel, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
+import { asset } from '../lib/asset'
 
 export default function ProjectDialog({
   project,
@@ -57,11 +58,19 @@ export default function ProjectDialog({
         <div className="flex min-h-full items-start justify-center p-0 sm:p-6">
           <article className="w-full max-w-3xl border-2 border-ink bg-paper sm:my-6">
             <div className="relative">
-              <ProjectCover
-                category={project.category}
-                index={index}
-                className="h-40 w-full border-b-2 border-ink sm:h-56"
-              />
+              {project.image ? (
+                <img
+                  src={asset(project.image)}
+                  alt={`Tela do projeto ${project.title}`}
+                  className="h-40 w-full border-b-2 border-ink object-cover object-top sm:h-56"
+                />
+              ) : (
+                <ProjectCover
+                  category={project.category}
+                  index={index}
+                  className="h-40 w-full border-b-2 border-ink sm:h-56"
+                />
+              )}
               <form method="dialog" className="absolute top-3 right-3">
                 <button
                   className="shadow-hard-sm flex size-10 items-center justify-center border-2 border-ink bg-paper transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
