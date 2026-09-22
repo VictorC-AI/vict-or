@@ -37,6 +37,11 @@ export interface Project {
    * que leia sobre o creme. Some do card se ficar vazio.
    */
   logo?: string
+  /**
+   * Outras telas, mostradas dentro do detalhe. A legenda é obrigatória:
+   * print sem legenda o visitante não sabe o que está olhando.
+   */
+  gallery?: { src: string; caption: string }[]
 }
 
 export const profile = {
@@ -129,6 +134,20 @@ export const projects: Project[] = [
     links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
     image: '/shots/beacreative.jpg',
     logo: '/logos/beacreative.svg',
+    gallery: [
+      {
+        src: '/shots/bea-planos.jpg',
+        caption: 'Os quatro planos, com o que cada um entrega',
+      },
+      {
+        src: '/shots/bea-devweb.jpg',
+        caption: 'A seção de desenvolvimento web, onde assino o trabalho',
+      },
+      {
+        src: '/shots/bea-agenda.jpg',
+        caption: 'Agendamento pelo Calendly, dentro da própria página',
+      },
+    ],
   },
   {
     slug: 'laeg-estoque',
@@ -153,6 +172,21 @@ export const projects: Project[] = [
     ],
     image: '/shots/laeg-estoque.jpg',
     logo: '/logos/laeg-bio.png',
+    gallery: [
+      {
+        src: '/shots/laeg-panorama.jpg',
+        caption:
+          'Painel de abertura: estoque baixo, validade e composição do acervo',
+      },
+      {
+        src: '/shots/laeg-qr.jpg',
+        caption: 'Etiquetas QR geradas em lote, prontas pra impressão',
+      },
+      {
+        src: '/shots/laeg-login.jpg',
+        caption: 'Entrada com e-mail do laboratório e dois níveis de acesso',
+      },
+    ],
   },
 ]
 

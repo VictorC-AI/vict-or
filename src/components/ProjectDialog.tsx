@@ -131,6 +131,27 @@ export default function ProjectDialog({
                 ))}
               </div>
 
+              {project.gallery && project.gallery.length > 0 && (
+                <section className="rule mt-9 pt-7">
+                  <h3 className="text-lg font-bold">Outras telas</h3>
+                  <ul className="mt-5 space-y-7">
+                    {project.gallery.map((shot) => (
+                      <li key={shot.src}>
+                        <img
+                          src={asset(shot.src)}
+                          alt={shot.caption}
+                          loading="lazy"
+                          className="w-full border-2 border-ink"
+                        />
+                        <p className="mt-2.5 text-sm text-muted">
+                          {shot.caption}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
               <div className="rule mt-9 flex flex-wrap gap-2 pt-6">
                 {project.stack.map((t) => (
                   <span
