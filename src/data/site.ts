@@ -136,7 +136,7 @@ export const projects: Project[] = [
     problem:
       'O controle do estoque era um caderno. Sou bolsista no LAEG-BIO e via todo dia a mesma cena: ninguém respondia de cabeça o que havia na prateleira, o que estava perto de vencer ou quem tinha levado o último frasco. Ninguém pediu um sistema — a falta dele custava tempo de todo mundo.',
     solution:
-      'Sistema com login e dois níveis de acesso. Cadastro por categoria com unidade, marca, local e validade, marcação de reagente controlado, e registro de qual operador retirou cada item. Etiqueta QR impressa pra prateleira: aponta a câmera e o item abre. Item apagado vai pro arquivo em vez de sumir, então o histórico de movimentação sobrevive.',
+      'Sistema com login e dois níveis de acesso. Cadastro por categoria com unidade, marca, local e validade, marcação de reagente controlado, e registro de qual operador retirou cada item. Um painel abre mostrando o que está em estoque baixo e o que vence primeiro, antes de qualquer busca. Etiqueta QR impressa pra prateleira: aponta a câmera e o item abre. Item apagado vai pro arquivo em vez de sumir, então o histórico de movimentação sobrevive.',
     result:
       'O caderno saiu do circuito. Validade e responsável pela retirada passaram a viver na mesma tela, consultáveis do celular no meio do laboratório, e o histórico sobrevive mesmo quando um item sai do catálogo.',
     links: [
@@ -145,6 +145,7 @@ export const projects: Project[] = [
         href: 'https://estoque-de-produtos.laegestoque.workers.dev/',
       },
     ],
+    image: '/shots/laeg-estoque.jpg',
   },
 ]
 
