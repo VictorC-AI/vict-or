@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Design tokens — marca vict.<OR>
+   Tirados direto do logo: creme, azul elétrico, preto puro.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-cream: #f4efe6;
+  --color-paper: #fbf8f2;
+  --color-sand: #e4ddd0;
+  --color-ink: #000000;
+  --color-muted: #6a645a;
+  --color-blue: #233dff;
+  --color-blue-deep: #1526c4;
+  --color-blue-soft: #d9ddff;
+
+  --font-sans:
+    'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --text-mega: clamp(2.6rem, 11.2vw, 9.5rem);
+  --text-mega--line-height: 0.85;
+  --text-mega--letter-spacing: -0.04em;
+
+  --text-big: clamp(2.1rem, 5.6vw, 4.5rem);
+  --text-big--line-height: 0.92;
+  --text-big--letter-spacing: -0.03em;
+
+  --text-lead: clamp(1.125rem, 1.8vw, 1.5rem);
+  --text-lead--line-height: 1.45;
+
+  --radius-tile: 26%;
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-blue);
+    color: var(--color-cream);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-blue);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Em blocos escuros o foco azul some contra o preto: usa creme. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-cream);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilitários da marca
+   ------------------------------------------------------------------ */
+
+/* Largura do eixo variável da Archivo — o wordmark é largo e pesado. */
+@utility type-display {
+  font-family: var(--font-sans);
+  font-variation-settings: 'wdth' 118;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+@utility type-wide {
+  font-variation-settings: 'wdth' 112;
+}
+
+@utility type-narrow {
+  font-variation-settings: 'wdth' 82;
+}
+
+/* Sombra sólida deslocada — o mesmo offset do bloco do logo. */
+@utility shadow-hard {
+  box-shadow: 6px 6px 0 0 var(--color-ink);
+}
+
+@utility shadow-hard-sm {
+  box-shadow: 4px 4px 0 0 var(--color-ink);
+}
+
+@utility shadow-hard-cream {
+  box-shadow: 6px 6px 0 0 var(--color-cream);
+}
+
+@utility shadow-hard-blue {
+  box-shadow: 6px 6px 0 0 var(--color-blue);
+}
+
+/* Trilho de conteúdo padrão. */
+@utility shell {
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+/* Régua fina que separa as faixas. */
+@utility rule {
+  border-top: 1px solid color-mix(in oklab, var(--color-ink) 16%, transparent);
+}
+
+/* ------------------------------------------------------------------
+   Animações (uma só, na abertura)
+   ------------------------------------------------------------------ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.7em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.rise {
+  animation: rise 0.75s var(--ease-snap) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

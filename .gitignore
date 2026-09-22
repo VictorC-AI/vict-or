@@ -1,0 +1,10 @@
+node_modules
+dist
+
+# pasta que o app do Claude usa pra salvar arquivos nesta máquina
+Claude outputs/
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
