@@ -48,11 +48,11 @@ export const profile = {
   name: 'Victor Carvalho',
   wordmark: 'vict.<OR>',
   role: 'Desenvolvedor full stack',
-  location: 'Sorocaba, SP',
   email: 'victordevv.ui@gmail.com',
-  github: 'https://github.com/VictorC-AI',
   /** deixe '' pra esconder o link no rodapé */
-  linkedin: '',
+  github: 'https://github.com/VictorC-AI',
+  linkedin:
+    'https://www.linkedin.com/in/victor-iago-barros-carvalho-b109873b3',
   instagram: '',
   /** WhatsApp em formato internacional, só números. '' esconde o botão. */
   whatsapp: '',

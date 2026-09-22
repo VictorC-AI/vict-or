@@ -1,4 +1,4 @@
-import { hero, profile } from '../data/site'
+import { hero } from '../data/site'
 import GridField from './GridField'
 
 export default function Hero() {
@@ -55,11 +55,7 @@ export default function Hero() {
       </div>
 
       <div className="shell relative">
-        <dl className="rule grid grid-cols-2 gap-x-8 gap-y-6 py-7 sm:grid-cols-4 sm:py-8">
-          <div>
-            <dt className="text-sm text-muted">Onde estou</dt>
-            <dd className="mt-1 text-lg font-bold">{profile.location}</dd>
-          </div>
+        <dl className="rule grid grid-cols-2 gap-x-8 gap-y-6 py-7 sm:grid-cols-3 sm:py-8">
           {hero.facts.map((f) => (
             <div key={f.label}>
               <dt className="text-sm text-muted">{f.label}</dt>
