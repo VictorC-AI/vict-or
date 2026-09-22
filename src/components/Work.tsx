@@ -136,9 +136,24 @@ export default function Work() {
                       : 'contents'
                   }
                 >
+                  {p.logo && (
+                    <img
+                      src={asset(p.logo)}
+                      alt=""
+                      /* caixa em vez de altura fixa: wordmark largo bate no
+                         limite de largura, marca empilhada bate no de altura,
+                         e os dois ocupam o mesmo peso visual */
+                      className={`max-h-9 w-auto max-w-[170px] object-contain object-left sm:max-h-11 sm:max-w-[200px] ${
+                        featured ? 'mb-4' : 'mt-5'
+                      }`}
+                    />
+                  )}
+
                   <h3
                     className={`type-display ${
-                      featured ? 'text-4xl sm:text-5xl' : 'mt-5 text-3xl'
+                      featured
+                        ? 'text-4xl sm:text-5xl'
+                        : `text-3xl ${p.logo ? 'mt-3' : 'mt-5'}`
                     }`}
                   >
                     <button

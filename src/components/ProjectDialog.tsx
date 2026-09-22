@@ -62,7 +62,7 @@ export default function ProjectDialog({
                 <img
                   src={asset(project.image)}
                   alt={`Tela do projeto ${project.title}`}
-                  className="h-40 w-full border-b-2 border-ink object-cover object-top sm:h-56"
+                  className="aspect-[16/9] w-full border-b-2 border-ink object-cover"
                 />
               ) : (
                 <ProjectCover
@@ -89,6 +89,14 @@ export default function ProjectDialog({
             </div>
 
             <div className="p-6 sm:p-10">
+              {project.logo && (
+                <img
+                  src={asset(project.logo)}
+                  alt=""
+                  className="mb-5 max-h-11 w-auto max-w-[190px] object-contain object-left sm:max-h-14 sm:max-w-[220px]"
+                />
+              )}
+
               <h2 id="detalhe-titulo" className="type-display text-4xl sm:text-5xl">
                 {project.title}
               </h2>

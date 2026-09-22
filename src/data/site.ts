@@ -30,8 +30,13 @@ export interface Project {
   solution: string
   result: string
   links?: { label: string; href: string }[]
-  /** caminho em /public, ex: '/shots/beacreative.png'. Vazio = capa gerada. */
+  /** caminho em /public, ex: '/shots/beacreative.jpg'. Vazio = capa gerada. */
   image?: string
+  /**
+   * Logo do cliente — SVG (ideal) ou PNG com fundo transparente, em cor
+   * que leia sobre o creme. Some do card se ficar vazio.
+   */
+  logo?: string
 }
 
 export const profile = {
@@ -123,6 +128,7 @@ export const projects: Project[] = [
       'Quem chega já sabe o que cada plano entrega antes de mandar a primeira mensagem. Sou o desenvolvedor web da equipe e o site é meu desde a primeira linha.',
     links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
     image: '/shots/beacreative.jpg',
+    logo: '/logos/beacreative.svg',
   },
   {
     slug: 'laeg-estoque',
@@ -146,6 +152,7 @@ export const projects: Project[] = [
       },
     ],
     image: '/shots/laeg-estoque.jpg',
+    logo: '/logos/laeg-bio.png',
   },
 ]
 
