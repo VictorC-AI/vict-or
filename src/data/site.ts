@@ -39,7 +39,7 @@ export const profile = {
   wordmark: 'vict.<OR>',
   role: 'Desenvolvedor full stack',
   location: 'Sorocaba, SP',
-  email: 'victorbarros.carvalho13@gmail.com',
+  email: 'victordevv.ui@gmail.com',
   github: 'https://github.com/VictorC-AI',
   /** deixe '' pra esconder o link no rodapé */
   linkedin: '',
@@ -122,6 +122,7 @@ export const projects: Project[] = [
     result:
       'Quem chega já sabe o que cada plano entrega antes de mandar a primeira mensagem. Sou o desenvolvedor web da equipe e o site é meu desde a primeira linha.',
     links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
+    image: '/shots/beacreative.jpg',
   },
   {
     slug: 'laeg-estoque',
