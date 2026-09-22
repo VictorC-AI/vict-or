@@ -2,19 +2,20 @@
    TODO O CONTEÚDO DO SITE MORA AQUI.
    Pra trocar texto, projeto, link ou tecnologia, edite só este arquivo —
    nenhum componente precisa ser mexido.
+
+   Procure por CONFERIR: são os pontos que ainda dependem de você.
    ===================================================================== */
 
 /**
  * 'jogo' continua aqui de propósito, mesmo sem projeto de jogo publicado.
- * No dia em que você entregar o primeiro, é só:
- *   1. adicionar o projeto abaixo com category: 'jogo'  → o filtro "Jogos"
- *      aparece sozinho na seção Trabalhos;
- *   2. (se quiser vender o serviço) devolver o bloco de Jogos em `services`.
+ * No dia em que você entregar o primeiro, é só adicionar o projeto abaixo
+ * com category: 'jogo' — o filtro "Jogos" aparece sozinho na seção
+ * Trabalhos, porque ele é montado a partir das categorias que têm projeto.
  */
-export type Category = 'site' | 'jogo' | 'ecommerce'
+export type Category = 'site' | 'sistema' | 'jogo' | 'ecommerce'
 
 export interface Project {
-  /** usado na URL do modal e como key */
+  /** usado como key e na ordem da grade; o primeiro vira destaque */
   slug: string
   title: string
   /** uma linha, aparece no card */
@@ -29,19 +30,19 @@ export interface Project {
   solution: string
   result: string
   links?: { label: string; href: string }[]
-  /** caminho em /public, ex: '/shots/lumen.png'. Vazio = usa o padrão gerado. */
+  /** caminho em /public, ex: '/shots/beacreative.png'. Vazio = capa gerada. */
   image?: string
 }
 
 export const profile = {
-  name: 'Victor Barros',
+  name: 'Victor Carvalho',
   wordmark: 'vict.<OR>',
   role: 'Desenvolvedor full stack',
   location: 'Sorocaba, SP',
   email: 'victorbarros.carvalho13@gmail.com',
+  github: 'https://github.com/VictorC-AI',
   /** deixe '' pra esconder o link no rodapé */
-  github: 'https://github.com/',
-  linkedin: 'https://www.linkedin.com/',
+  linkedin: '',
   instagram: '',
   /** WhatsApp em formato internacional, só números. '' esconde o botão. */
   whatsapp: '',
@@ -51,14 +52,13 @@ export const hero = {
   /** cada string é uma linha do título */
   headline: ['Eu construo', 'a coisa', 'inteira.'],
   lead:
-    'Sites e lojas online escritos do zero — do primeiro wireframe ao deploy. Sem tema comprado, sem página que demora seis segundos pra abrir.',
+    'Sites e sistemas escritos do zero — do primeiro wireframe ao deploy. Sem tema comprado, sem página que demora seis segundos pra abrir.',
   primaryCta: { label: 'Ver o que eu fiz', href: '#trabalhos' },
   secondaryCta: { label: 'Começar um projeto', href: '#contato' },
-  /** números pequenos ao pé do hero */
   facts: [
-    { value: '2022', label: 'escrevendo código desde' },
-    { value: 'Unicamp', label: 'Sistemas de Informação' },
-    { value: 'PT / EN', label: 'idiomas de trabalho' },
+    { value: 'Unicamp FT', label: 'Sistemas de Informação' },
+    { value: 'LAEG-BIO', label: 'bolsista no laboratório' },
+    { value: 'Dois', label: 'projetos no ar hoje' },
   ],
 }
 
@@ -70,22 +70,35 @@ export const services = [
       'Institucional, portfólio ou landing page que carrega rápido, aparece no Google e você mesmo consegue atualizar.',
     includes: [
       'Design sob medida, nada de template',
-      'Painel simples pra editar textos e fotos',
-      'Nota verde no Lighthouse',
-      'Formulário de contato que realmente chega',
+      'Feito em cima da sua identidade visual',
+      'Abre rápido no celular, não só no seu notebook',
+      'Formulário e agendamento que realmente chegam',
     ],
     deliverable: 'De 2 a 4 semanas',
+  },
+  {
+    id: 'sistema' as Category,
+    name: 'Sistemas',
+    pitch:
+      'A planilha que já não dá conta virando sistema: cadastro, login por pessoa, histórico de quem mexeu no quê.',
+    includes: [
+      'Login com níveis de acesso por função',
+      'Histórico de movimentação que não se apaga',
+      'Funciona no celular, no balcão e no laboratório',
+      'Relatório e etiqueta QR quando o processo pede',
+    ],
+    deliverable: 'De 4 a 10 semanas',
   },
   {
     id: 'ecommerce' as Category,
     name: 'E-commerce',
     pitch:
-      'Loja completa com checkout, Pix, cartão e estoque — montada na sua marca, não na cara do Shopify.',
+      'Loja com checkout, Pix e controle de estoque, montada na sua marca. Área que estou abrindo — o preço acompanha.',
     includes: [
       'Checkout com Pix, cartão e boleto',
       'Controle de estoque e pedidos',
       'Frete calculado pelos Correios',
-      'Relatório de vendas por período',
+      'Montada na sua identidade, não num tema pronto',
     ],
     deliverable: 'De 4 a 10 semanas',
   },
@@ -93,106 +106,77 @@ export const services = [
 
 export const projects: Project[] = [
   {
-    slug: 'lumen-studio',
-    title: 'Lumen Studio',
-    summary: 'Site de um estúdio de fotografia com galeria que carrega em blocos.',
+    slug: 'beacreative',
+    title: 'BeaCreative',
+    summary:
+      'Site da agência de social media e estratégia de conteúdo da Beatriz Silveira.',
     year: '2026',
     category: 'site',
     status: 'No ar',
-    stack: ['React', 'TypeScript', 'Tailwind', 'Sanity CMS'],
+    stack: ['HTML', 'CSS', 'JavaScript'],
+    // CONFERIR: se antes existia outro site, ou se o gargalo era outro
     problem:
-      'O estúdio publicava trabalhos novos em um Instagram que ninguém encontrava no Google, e o site antigo levava nove segundos pra abrir a galeria.',
+      'Os quatro planos da agência, o que cada um entrega e o portfólio de clientes viviam em conversa de Instagram e WhatsApp, repetidos a cada novo interessado.',
     solution:
-      'Refiz o site com galeria em blocos que carregam sob demanda, imagens em AVIF com fallback e um CMS onde a equipe publica um ensaio novo em dois minutos.',
+      'Site estático em HTML, CSS e JavaScript puros — sem CMS, sem build, sem framework pra carregar antes do conteúdo aparecer. Os planos Essência, Presença, Conexão e Memória com o que cada um inclui, portfólio, FAQ e bloco de agendamento. A identidade visual da Bea aplicada do zero.',
     result:
-      'Galeria abre em menos de um segundo. O estúdio publica sozinho desde a entrega, sem me chamar.',
-    links: [{ label: 'Abrir o site', href: '#' }],
+      'Quem chega já sabe o que cada plano entrega antes de mandar a primeira mensagem. Sou o desenvolvedor web da equipe e o site é meu desde a primeira linha.',
+    links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
   },
   {
-    slug: 'raiz-organicos',
-    title: 'Raiz Orgânicos',
-    summary: 'Loja de hortifruti com entrega por bairro e assinatura semanal.',
-    year: '2025',
-    category: 'ecommerce',
+    slug: 'laeg-estoque',
+    title: 'LAEG Estoque',
+    summary:
+      'Controle de estoque do LAEG-BIO, laboratório de ecotoxicologia da Unicamp.',
+    year: '2026',
+    category: 'sistema',
     status: 'No ar',
-    stack: ['Next.js', 'Stripe', 'PostgreSQL', 'Prisma'],
+    stack: ['JavaScript', 'Supabase', 'Cloudflare Workers'],
     problem:
-      'A venda acontecia por WhatsApp. Pedido errado, estoque no caderno e nenhuma forma de saber o que mais saía.',
+      'O controle do estoque era um caderno. Sou bolsista no LAEG-BIO e via todo dia a mesma cena: ninguém respondia de cabeça o que havia na prateleira, o que estava perto de vencer ou quem tinha levado o último frasco. Ninguém pediu um sistema — a falta dele custava tempo de todo mundo.',
     solution:
-      'Loja com catálogo por safra, assinatura semanal recorrente, checkout com Pix e cartão, e um painel que mostra o que precisa ser colhido na quinta.',
+      'Sistema com login e dois níveis de acesso. Cadastro por categoria com unidade, marca, local e validade, marcação de reagente controlado, e registro de qual operador retirou cada item. Etiqueta QR impressa pra prateleira: aponta a câmera e o item abre. Item apagado vai pro arquivo em vez de sumir, então o histórico de movimentação sobrevive.',
     result:
-      'Pedido entra sozinho no painel. O caderno saiu de circulação no primeiro mês.',
-    links: [{ label: 'Ver a loja', href: '#' }],
-  },
-  {
-    slug: 'clave-app',
-    title: 'Clave',
-    summary: 'App de cifras que transpõe o tom junto com a banda inteira.',
-    year: '2025',
-    category: 'site',
-    status: 'Beta',
-    stack: ['React', 'IndexedDB', 'Web Audio API', 'PWA'],
-    problem:
-      'Toco teclado em igreja. Quando o tom muda no ensaio, cinco pessoas rabiscam a cifra no papel ao mesmo tempo e alguém sempre erra.',
-    solution:
-      'Cifra compartilhada que transpõe pra todo mundo de uma vez, funciona offline depois da primeira abertura e marca a parte de cada instrumento.',
-    result:
-      'Usado toda semana pela banda. Zero papel no ensaio desde março.',
-    links: [{ label: 'Entrar no beta', href: '#' }],
-  },
-  {
-    slug: 'marco-zero',
-    title: 'Marco Zero',
-    summary: 'Catálogo de peças de bicicleta com busca por compatibilidade.',
-    year: '2024',
-    category: 'ecommerce',
-    status: 'No ar',
-    stack: ['Astro', 'Alpine.js', 'Mercado Pago', 'Supabase'],
-    problem:
-      'Quem compra peça de bike quer saber uma coisa antes do preço: isso encaixa na minha bicicleta?',
-    solution:
-      'Busca que filtra por modelo e ano da bike antes de mostrar qualquer produto, com checkout Mercado Pago e retirada na loja.',
-    result:
-      'A pergunta "serve na minha?" saiu do WhatsApp. Devolução por peça errada caiu.',
-    links: [{ label: 'Ver o catálogo', href: '#' }],
+      'O caderno saiu do circuito. Validade e responsável pela retirada passaram a viver na mesma tela, consultáveis do celular no meio do laboratório, e o histórico sobrevive mesmo quando um item sai do catálogo.',
+    links: [
+      {
+        label: 'Abrir o sistema',
+        href: 'https://estoque-de-produtos.laegestoque.workers.dev/',
+      },
+    ],
   },
 ]
 
 export const stack = [
   {
-    group: 'Interface',
+    group: 'Uso hoje',
     items: [
-      'React',
-      'TypeScript',
-      'Next.js',
-      'Astro',
-      'Tailwind',
-      'Vite',
-      'Canvas API',
+      'HTML',
+      'CSS',
+      'JavaScript',
+      'Python',
+      'Supabase',
+      'Cloudflare Workers',
+      'Git',
     ],
   },
   {
-    group: 'Servidor e dados',
-    items: ['Node.js', 'PostgreSQL', 'Prisma', 'Supabase', 'Python', 'C'],
-  },
-  {
-    group: 'Operação',
-    items: ['Git', 'Vercel', 'Docker', 'Figma', 'Linux'],
+    group: 'Aprendendo agora',
+    items: ['React', 'TypeScript', 'Tailwind', 'Vite'],
   },
 ]
 
 export const about = {
   title: 'Sobre',
   paragraphs: [
-    'Sou Victor. Estudo Sistemas de Informação na Unicamp e escrevo código desde 2022, quando quebrei o primeiro site tentando entender por que ele estava lento.',
-    'Antes de programar, eu já tocava teclado — e é de lá que vem a parte do trabalho que ninguém vê no código: arranjo é decidir o que entra, o que sai e em que ordem. Uma tela funciona igual. A maior parte do meu tempo em um projeto é cortando coisa.',
+    'Sou Victor. Curso Sistemas de Informação na Unicamp FT e sou bolsista no LAEG-BIO, laboratório de ecotoxicologia — foi lá dentro que nasceu o sistema de estoque que está aqui em cima, sem ninguém ter pedido.',
+    'Aprendo linguagem nova pelo gosto de aprender, e o assunto que mais me puxa é cibersegurança. Mas o motivo de eu escrever código é mais simples que isso: gosto de olhar uma dor de quem está perto e devolver alguma coisa que tire aquele peso. Foi assim no laboratório, foi assim no site da agência da Beatriz.',
     'Trabalho do início ao fim: converso com você pra entender o problema, desenho, escrevo, publico e fico por perto depois que sobe.',
     'O próximo terreno que eu quero pisar é jogo de navegador. Ainda não entreguei nenhum — no dia em que entregar, ele aparece aqui em cima.',
   ],
-  /** aparece como lista curta ao lado do texto */
   principles: [
-    'Nada vai pro ar sem passar no teclado',
-    'Se demora mais de 2s pra abrir, não terminei',
+    'Começo pela dor, não pela tecnologia',
+    'Nada vai pro ar sem passar no celular',
     'Você recebe o código, não só o site',
     'Explico decisão técnica em português',
   ],
@@ -219,6 +203,7 @@ export const nav = [
 
 export const categoryLabel: Record<Category, string> = {
   site: 'Site',
+  sistema: 'Sistema',
   jogo: 'Jogo',
   ecommerce: 'E-commerce',
 }

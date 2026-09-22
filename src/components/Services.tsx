@@ -5,14 +5,14 @@ export default function Services() {
     <section id="servicos" className="on-dark bg-ink text-cream">
       <div className="shell py-20 sm:py-28">
         <div className="max-w-[52ch]">
-          <h2 className="type-display text-big">Duas coisas, bem feitas.</h2>
+          <h2 className="type-display text-big">Três coisas, bem feitas.</h2>
           <p className="text-lead mt-6 text-cream/70">
             Não pego tudo que aparece. Estes são os trabalhos em que eu entrego o
             projeto inteiro sem terceirizar nada.
           </p>
         </div>
 
-        <div className="mt-12 grid divide-y divide-cream/20 sm:mt-16 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+        <div className="mt-12 grid divide-y divide-cream/20 sm:mt-16 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
           {services.map((s) => (
             <article
               key={s.id}

@@ -8,6 +8,7 @@ type Filter = 'tudo' | Category
 /** ordem fixa; só entra no filtro a categoria que tem projeto publicado */
 const ORDER: { id: Category; label: string }[] = [
   { id: 'site', label: 'Sites' },
+  { id: 'sistema', label: 'Sistemas' },
   { id: 'jogo', label: 'Jogos' },
   { id: 'ecommerce', label: 'E-commerce' },
 ]
@@ -83,17 +84,30 @@ export default function Work() {
 
         <ul className="mt-12 grid gap-x-8 gap-y-14 sm:mt-16 md:grid-cols-2">
           {visible.map(({ p, i }, pos) => {
-            const featured = pos === 0
+            // Com poucos projetos, a grade de duas colunas deixa um card
+            // sozinho na linha. Nesse caso todos ganham a linha inteira,
+            // alternando o lado da imagem pra não virarem duas fatias iguais.
+            const wide = pos === 0 || visible.length <= 2
+            const featured = wide
+            const flipped = wide && pos % 2 === 1
             return (
               <li
                 key={p.slug}
                 className={
-                  featured
-                    ? 'relative md:col-span-2 md:grid md:grid-cols-[1.35fr_1fr] md:items-center md:gap-10'
+                  wide
+                    ? `relative md:col-span-2 md:grid md:items-center md:gap-10 ${
+                        flipped
+                          ? 'md:grid-cols-[1fr_1.35fr]'
+                          : 'md:grid-cols-[1.35fr_1fr]'
+                      }`
                     : 'relative flex flex-col'
                 }
               >
-                <div className="border-2 border-ink">
+                <div
+                  className={`border-2 border-ink ${
+                    flipped ? 'md:order-2' : ''
+                  }`}
+                >
                   {p.image ? (
                     <img
                       src={p.image}
@@ -114,7 +128,13 @@ export default function Work() {
                   )}
                 </div>
 
-                <div className={featured ? 'mt-5 md:mt-0' : 'contents'}>
+                <div
+                  className={
+                    featured
+                      ? `mt-5 md:mt-0 ${flipped ? 'md:order-1' : ''}`
+                      : 'contents'
+                  }
+                >
                   <h3
                     className={`type-display ${
                       featured ? 'text-4xl sm:text-5xl' : 'mt-5 text-3xl'

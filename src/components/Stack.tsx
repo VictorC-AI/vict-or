@@ -7,8 +7,8 @@ export default function Stack() {
         <div className="max-w-[48ch]">
           <h2 className="type-display text-big">Ferramentas</h2>
           <p className="text-lead mt-5 text-ink/75">
-            Escolho a stack depois de entender o projeto. Estas são as que eu uso
-            sem precisar consultar documentação a cada linha.
+            O que eu uso sem consultar documentação a cada linha, e o que estou
+            aprendendo agora. Este site foi escrito com a segunda lista.
           </p>
         </div>
 

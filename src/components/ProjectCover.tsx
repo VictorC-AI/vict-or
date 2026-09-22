@@ -34,6 +34,7 @@ export default function ProjectCover({
     >
       <rect width="160" height="112" fill={bg} />
       {category === 'site' && <SiteMark fg={fg} shift={index} />}
+      {category === 'sistema' && <SystemMark fg={fg} shift={index} />}
       {category === 'jogo' && <GameMark fg={fg} shift={index} />}
       {category === 'ecommerce' && <ShopMark fg={fg} shift={index} />}
     </svg>
@@ -55,6 +56,47 @@ function SiteMark({ fg, shift }: { fg: string; shift: number }) {
           height="7"
         />
       ))}
+    </g>
+  )
+}
+
+/** registros em lista + etiqueta QR: o que um sistema interno é, em forma */
+function SystemMark({ fg, shift }: { fg: string; shift: number }) {
+  const rows = [0, 1, 2, 3]
+  const cells = [
+    [1, 0, 1, 1],
+    [0, 1, 1, 0],
+    [1, 1, 0, 1],
+    [1, 0, 1, 0],
+  ]
+  return (
+    <g fill={fg}>
+      {rows.map((r) => (
+        <g key={r}>
+          <rect x="20" y={28 + r * 16} width="8" height="8" />
+          <rect
+            x="34"
+            y={29 + r * 16}
+            width={38 + ((shift * 9 + r * 7) % 22)}
+            height="6"
+            opacity="0.55"
+          />
+        </g>
+      ))}
+      {cells.map((row, r) =>
+        row.map((on, c) =>
+          on ? (
+            <rect
+              key={`${r}-${c}`}
+              x={108 + c * 10}
+              y={28 + r * 10}
+              width="8"
+              height="8"
+            />
+          ) : null,
+        ),
+      )}
+      <rect x="108" y="76" width="34" height="4" opacity="0.35" />
     </g>
   )
 }
