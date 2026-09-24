@@ -230,10 +230,25 @@ export const contact = {
   lead:
     'Me conte o que você quer resolver. Respondo em até um dia útil com um caminho, um prazo e um preço — ou com o motivo de eu não ser a pessoa certa pra esse projeto.',
   /**
-   * Formspree, Basin, Web3Forms — qualquer um funciona.
-   * Deixe '' e o formulário vira um link de e-mail.
+   * Onde o formulário entrega a mensagem.
+   *
+   * Vazio: o botão abre o e-mail do visitante já preenchido — e só chega
+   * em você se ele clicar em enviar lá também. Serve de emergência, não
+   * de solução.
+   *
+   * Web3Forms (grátis, sem criar conta — a chave chega por e-mail):
+   *   formEndpoint: 'https://api.web3forms.com/submit'
+   *   formHiddenFields: { access_key: 'sua-chave-aqui' }
+   *
+   * Formspree (precisa de conta):
+   *   formEndpoint: 'https://formspree.io/f/SEU-ID'
+   *   formHiddenFields: {}
    */
-  formEndpoint: '',
+  formEndpoint: 'https://api.web3forms.com/submit',
+  /** campos extras que o serviço exige, enviados junto */
+  formHiddenFields: {
+    access_key: '3509b54a-6b8c-401e-a4d8-2e211c637f3c',
+  } as Record<string, string>,
   budgets: ['Até R$ 3 mil', 'R$ 3 a 8 mil', 'R$ 8 a 20 mil', 'Ainda não sei'],
 }
 

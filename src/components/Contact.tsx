@@ -27,6 +27,19 @@ export default function Contact() {
       return
     }
 
+    // armadilha de robô: humano nunca preenche um campo escondido
+    if (data.get('empresa')) {
+      setState('sent')
+      return
+    }
+    data.delete('empresa')
+
+    // campos que o serviço exige (ex.: access_key do Web3Forms)
+    for (const [k, v] of Object.entries(contact.formHiddenFields ?? {})) {
+      data.set(k, v)
+    }
+    data.set('subject', `Novo contato pelo site — ${data.get('nome')}`)
+
     setState('sending')
     try {
       const res = await fetch(contact.formEndpoint, {
@@ -76,6 +89,15 @@ export default function Contact() {
           </div>
 
           <form onSubmit={handleSubmit} className="grid gap-5">
+            {/* honeypot — invisível pra gente, irresistível pra robô */}
+            <input
+              type="text"
+              name="empresa"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute left-[-9999px] h-0 w-0 opacity-0"
+            />
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="grid gap-2">
                 <span className="font-semibold">Seu nome</span>
