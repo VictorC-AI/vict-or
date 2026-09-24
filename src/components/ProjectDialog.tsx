@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { categoryLabel, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
+import Lightbox, { type Shot } from './Lightbox'
 import { asset } from '../lib/asset'
 
 /** quebra o texto em parágrafos onde houver linha em branco */
@@ -31,6 +32,18 @@ export default function ProjectDialog({
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement | null>(null)
+  const [aberta, setAberta] = useState<number | null>(null)
+
+  // capa + galeria formam um conjunto só no visualizador
+  const shots: Shot[] = project
+    ? [
+        ...(project.image
+          ? [{ src: project.image, caption: project.summary }]
+          : []),
+        ...(project.gallery ?? []),
+      ]
+    : []
+  const primeiraDaGaleria = project?.image ? 1 : 0
 
   useEffect(() => {
     const el = ref.current
@@ -77,11 +90,18 @@ export default function ProjectDialog({
           <article className="w-full max-w-3xl border-2 border-ink bg-paper sm:my-6">
             <div className="relative">
               {project.image ? (
-                <img
-                  src={asset(project.image)}
-                  alt={`Tela do projeto ${project.title}`}
-                  className="aspect-[16/9] w-full border-b-2 border-ink object-cover"
-                />
+                <button
+                  type="button"
+                  onClick={() => setAberta(0)}
+                  aria-label="Ampliar esta tela"
+                  className="block w-full cursor-zoom-in"
+                >
+                  <img
+                    src={asset(project.image)}
+                    alt={`Tela do projeto ${project.title}`}
+                    className="aspect-[16/9] w-full border-b-2 border-ink object-cover"
+                  />
+                </button>
               ) : (
                 <ProjectCover
                   category={project.category}
@@ -207,15 +227,25 @@ export default function ProjectDialog({
               {project.gallery && project.gallery.length > 0 && (
                 <section className="rule mt-9 pt-7">
                   <h3 className="text-lg font-bold">Outras telas</h3>
+                  <p className="mt-1 text-sm text-muted">
+                    Toque em qualquer uma para ampliar.
+                  </p>
                   <ul className="mt-5 space-y-7">
-                    {project.gallery.map((shot) => (
+                    {project.gallery.map((shot, i) => (
                       <li key={shot.src}>
-                        <img
-                          src={asset(shot.src)}
-                          alt={shot.caption}
-                          loading="lazy"
-                          className="w-full border-2 border-ink"
-                        />
+                        <button
+                          type="button"
+                          onClick={() => setAberta(primeiraDaGaleria + i)}
+                          aria-label={`Ampliar: ${shot.caption}`}
+                          className="block w-full cursor-zoom-in border-2 border-ink"
+                        >
+                          <img
+                            src={asset(shot.src)}
+                            alt={shot.caption}
+                            loading="lazy"
+                            className="block w-full"
+                          />
+                        </button>
                         <p className="mt-2.5 text-sm text-muted">
                           {shot.caption}
                         </p>
@@ -262,6 +292,13 @@ export default function ProjectDialog({
           </article>
         </div>
       )}
+
+      <Lightbox
+        shots={shots}
+        index={aberta}
+        onIndex={setAberta}
+        onClose={() => setAberta(null)}
+      />
     </dialog>
   )
 }
