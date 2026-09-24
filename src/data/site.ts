@@ -294,15 +294,21 @@ export const projects: Project[] = [
       {
         src: '/shots/laeg-panorama.jpg',
         caption:
-          'Painel de abertura: estoque baixo, validade e composição do acervo',
+          'Panorama: estoque baixo, validade próxima e itens sem local, antes de qualquer busca',
+      },
+      {
+        src: '/shots/laeg-ficha.jpg',
+        caption:
+          'A ficha do item, no formato de rótulo de frasco — nível em proveta, mínimo configurável e baixa registrada ali mesmo',
       },
       {
         src: '/shots/laeg-qr.jpg',
-        caption: 'Etiquetas QR geradas em lote, prontas pra impressão',
+        caption: 'Etiqueta QR do item, pronta pra colar na prateleira',
       },
       {
-        src: '/shots/laeg-login.jpg',
-        caption: 'Entrada com e-mail do laboratório e dois níveis de acesso',
+        src: '/shots/laeg-admin.jpg',
+        caption:
+          'Administração: usuários, operadores, arquivados e impressão de etiquetas em lote',
       },
     ],
   },
