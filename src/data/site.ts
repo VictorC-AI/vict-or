@@ -55,6 +55,99 @@ export interface Project {
    * print sem legenda o visitante não sabe o que está olhando.
    */
   gallery?: { src: string; caption: string }[]
+  /**
+   * Vitrine com aparelhos e anotações. Quando existe, substitui a gallery
+   * no detalhe; quem não tiver showcase continua mostrando a gallery.
+   */
+  showcase?: ShowcaseBlock[]
+  /** capa desenhada do card; sem ela, o card usa `image` como antes */
+  cover?: Cover
+}
+
+/**
+ * Capa do card: um molde só, configurado por projeto.
+ * sparkle = ✦ espalhados · neubauer = malha da câmara de contagem · dots = grade de pontos
+ */
+export interface Cover {
+  /** bg = fundo, ink = cor do desenho do padrão, accent = destaque */
+  palette: { bg: string; ink: string; accent: string }
+  pattern: 'sparkle' | 'neubauer' | 'dots'
+  /** tela do notebook (16:9). Sem ela, a capa mostra só o celular. */
+  laptop?: string
+  /** tela do celular (390×844) */
+  phone: string
+  phoneWidths?: number[]
+  /** selo pequeno junto ao celular, ex: '✦ Aprovado' */
+  badge?: string
+  /**
+   * Logo do banner no topo do detalhe, em versão que contraste com `palette.bg`.
+   * Vazio = usa o `logo` do projeto.
+   */
+  bannerLogo?: string
+}
+
+export type Device = 'phone' | 'laptop'
+
+/** Retângulo em % da tela do aparelho (0 a 100), a partir do canto superior esquerdo. */
+export interface Area {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+/**
+ * Com `area`, o marcador vai sozinho pro canto de fora do destaque
+ * (x/y continuam valendo pra forçar outra posição). Sem `area`, x/y
+ * são obrigatórios. Valores fora de 0–100 põem o marcador na moldura.
+ */
+export type Annotation = {
+  title: string
+  body: string
+} & (
+  | {
+      /** posição do marcador em % da tela */
+      x: number
+      y: number
+      area?: undefined
+      padding?: undefined
+    }
+  | {
+      x?: number
+      y?: number
+      /** o conteúdo destacado, medido justo em % da tela */
+      area: Area
+      /** folga em px entre o conteúdo e o contorno (padrão 7) */
+      padding?: number
+    }
+)
+
+export interface Screen {
+  device: Device
+  /** .jpg, .png, .webp, .svg ou .mp4 — vídeo é detectado pela extensão */
+  src: string
+  /** obrigatório em vídeo: aparece antes de tocar e no lugar dele com movimento reduzido */
+  poster?: string
+  /** texto alternativo: o que a tela mostra, não o que ela é */
+  alt: string
+  /**
+   * Larguras disponíveis, pra o navegador escolher a menor que serve.
+   * A maior é o próprio src; as outras levam o sufixo. Com src '/shots/x.jpg'
+   * (780px) e widths [390, 780], precisa existir também '/shots/x-390.jpg'.
+   */
+  widths?: number[]
+  annotations?: Annotation[]
+}
+
+/**
+ * duo: notebook + celular, a mesma tela nos dois tamanhos (screens = [notebook, celular])
+ * flow: 2 a 4 celulares em sequência, com setas entre eles
+ * single: um aparelho, com as anotações ao lado
+ */
+export interface ShowcaseBlock {
+  layout: 'duo' | 'flow' | 'single'
+  screens: Screen[]
+  caption: string
 }
 
 export const profile = {
@@ -81,7 +174,7 @@ export const hero = {
   facts: [
     { value: 'Unicamp FT', label: 'Sistemas de Informação' },
     { value: 'LAEG-BIO', label: 'bolsista no laboratório' },
-    { value: 'Dois', label: 'projetos no ar hoje' },
+    { value: 'Três', label: 'projetos no ar hoje' },
   ],
 }
 
@@ -198,6 +291,13 @@ export const projects: Project[] = [
     links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
     image: '/shots/beacreative.jpg',
     logo: '/logos/beacreative.svg',
+    cover: {
+      palette: { bg: '#FFF5E9', ink: '#4D3B31', accent: '#7B85CE' },
+      pattern: 'sparkle',
+      laptop: '/shots/beacreative.jpg',
+      phone: '/shots/bea-m-portfolio.jpg',
+      phoneWidths: [390, 780],
+    },
     gallery: [
       {
         src: '/shots/bea-planos.jpg',
@@ -210,6 +310,123 @@ export const projects: Project[] = [
       {
         src: '/shots/bea-agenda.jpg',
         caption: 'Agendamento pelo Calendly, dentro da própria página',
+      },
+    ],
+    showcase: [
+      {
+        layout: 'duo',
+        caption: 'A página inicial no notebook e no celular',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/beacreative.jpg',
+            alt: 'Página inicial da BeaCreative no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/bea-m-inicio.jpg',
+            widths: [390, 780],
+            alt: 'Página inicial da BeaCreative no celular',
+          },
+        ],
+      },
+      {
+        layout: 'flow',
+        caption:
+          'O caminho de quem chega pelo Instagram: vê o trabalho, entende o plano, marca a conversa',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/bea-m-portfolio.jpg',
+            widths: [390, 780],
+            alt: 'Portfólio em formato de stories, com cards de case embaixo',
+            annotations: [
+              {
+                area: { x: 7, y: 45.2, w: 82, h: 13.6 },
+                title: 'Stories no topo',
+                body: 'Quem só quer passar o olho toca num círculo e vê o case em vídeo, do jeito que já faz no Instagram.',
+              },
+            ],
+          },
+          {
+            device: 'phone',
+            src: '/shots/bea-m-planos.jpg',
+            widths: [390, 780],
+            alt: 'Seção de planos, com o que está incluso em todos',
+          },
+          {
+            device: 'phone',
+            src: '/shots/bea-m-agenda.jpg',
+            widths: [390, 780],
+            alt: 'Seção de agendamento, com os três passos até a reunião',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption: 'Os quatro planos, com o que cada um entrega',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/bea-planos.jpg',
+            alt: 'Os quatro planos lado a lado no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/bea-m-planos.jpg',
+            widths: [390, 780],
+            alt: 'A seção de planos no celular',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption: 'A seção de desenvolvimento web, onde assino o trabalho',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/bea-devweb.jpg',
+            alt: 'Seção de desenvolvimento web no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/bea-m-sites.jpg',
+            widths: [390, 780],
+            alt: 'Seção de desenvolvimento web no celular',
+          },
+        ],
+      },
+      {
+        layout: 'single',
+        caption: 'Agendamento pelo Calendly, dentro da própria página',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/bea-m-agenda.jpg',
+            widths: [390, 780],
+            alt: 'Seção de agendamento no celular',
+            annotations: [
+              {
+                area: { x: 6, y: 23.5, w: 82.3, h: 25.5 },
+                // o canto cairia no fim do título: o número vai pra moldura,
+                x: 99,
+                y: 21,
+                title: 'Sem compromisso, dito logo de cara',
+                body: 'O título e a linha de apoio tiram o peso do primeiro contato antes de qualquer formulário.',
+              },
+              {
+                area: { x: 6, y: 53.6, w: 86, h: 21 },
+                title: 'Três passos antes da agenda',
+                body: 'A pessoa sabe o que acontece depois: escolhe o horário, preenche e recebe o link do Meet por e-mail.',
+              },
+              {
+                area: { x: 6, y: 82.2, w: 50.2, h: 5.4 },
+                title: 'Saída pra quem prefere conversar',
+                body: 'Um atalho pro WhatsApp, pra quem ainda não quer marcar horário.',
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -290,6 +507,14 @@ export const projects: Project[] = [
     ],
     image: '/shots/laeg-estoque.jpg',
     logo: '/logos/laeg-bio.png',
+    cover: {
+      palette: { bg: '#1f4d40', ink: '#d8e7d4', accent: '#30705f' },
+      pattern: 'neubauer',
+      bannerLogo: '/logos/laeg-bio-claro.png',
+      laptop: '/shots/laeg-panorama.jpg',
+      phone: '/shots/laeg-m-lista.jpg',
+      phoneWidths: [390, 718],
+    },
     gallery: [
       {
         src: '/shots/laeg-panorama.jpg',
@@ -309,6 +534,365 @@ export const projects: Project[] = [
         src: '/shots/laeg-admin.jpg',
         caption:
           'Administração: usuários, operadores, arquivados e impressão de etiquetas em lote',
+      },
+    ],
+    showcase: [
+      {
+        layout: 'duo',
+        caption: 'Entrada com e-mail do laboratório ou conta Google',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/laeg-login.jpg',
+            alt: 'Tela de login do LAEG Estoque no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-login.jpg',
+            widths: [390, 780],
+            alt: 'Tela de login do LAEG Estoque no celular',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption:
+          'Panorama: estoque baixo, validade próxima e itens sem local, antes de qualquer busca',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/laeg-panorama.jpg',
+            alt: 'Painel Panorama do LAEG Estoque no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-panorama.jpg',
+            widths: [390, 718],
+            alt: 'Panorama no celular, com o gráfico de estoque por status',
+          },
+        ],
+      },
+      {
+        layout: 'single',
+        caption: 'A lista no celular, agrupada do jeito que o laboratório guarda',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-lista.jpg',
+            widths: [390, 718],
+            alt: 'Lista de itens da Estante 1, Prateleira A',
+            annotations: [
+              {
+                // faixa escura do cabeçalho, sem texto no meio,
+                x: 50,
+                y: 30,
+                title: 'Agrupado por estante e prateleira',
+                body: 'A lista segue a ordem física do laboratório, com filtros independentes por local e categoria.',
+              },
+              {
+                area: { x: 7.5, y: 37.6, w: 88.4, h: 12.4 },
+                padding: 3,
+                title: 'Estoque baixo à vista',
+                body: 'Borda e etiqueta laranja antes mesmo de abrir o item. O mínimo é configurável item a item.',
+              },
+              {
+                // à direita do nome, antes da coluna de quantidade,
+                x: 64,
+                y: 72,
+                title: 'Quem cadastrou',
+                body: 'Todo item e toda movimentação ficam registrados com o nome de quem fez.',
+              },
+              {
+                area: { x: 80.2, y: 88.7, w: 14.5, h: 6.7 },
+                padding: 5,
+                title: 'Cadastro a um toque',
+                body: 'O botão fica onde o polegar alcança, pra registrar um item novo de pé na frente da prateleira.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        layout: 'flow',
+        caption:
+          'Do cadastro à retirada: o item entra no sistema, ganha etiqueta e sai da prateleira pelo celular',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-novo.jpg',
+            widths: [390, 718],
+            alt: 'Formulário de novo item',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-qr.jpg',
+            widths: [390, 718],
+            alt: 'QR code do item, pronto pra imprimir',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-retirada.jpg',
+            widths: [390, 718],
+            alt: 'Ficha do item com o registro de retirada',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption:
+          'A ficha do item, no formato de rótulo de frasco — nível em proveta, mínimo configurável e baixa registrada ali mesmo',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/laeg-ficha.jpg',
+            alt: 'Ficha de um item do estoque no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-retirada.jpg',
+            widths: [390, 718],
+            alt: 'Ficha do item no celular',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption: 'Etiqueta QR do item, pronta pra colar na prateleira',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/laeg-qr.jpg',
+            alt: 'Etiqueta QR de um item no notebook',
+          },
+          {
+            device: 'phone',
+            src: '/shots/laeg-m-qr.jpg',
+            widths: [390, 718],
+            alt: 'QR code do item no celular',
+          },
+        ],
+      },
+      {
+        layout: 'single',
+        caption:
+          'Administração: usuários, operadores, arquivados e impressão de etiquetas em lote',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/laeg-admin.jpg',
+            alt: 'Tela de administração do LAEG Estoque',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'beacreative-aprovacao',
+    title: 'BeaCreative Aprovação',
+    summary:
+      'Portal onde os clientes da agência veem cada post como vai ficar no Instagram e aprovam ou pedem ajuste, com conversa, áudio e notificações.',
+    year: '2026',
+    category: 'sistema',
+    status: 'No ar',
+    stack: [
+      'HTML',
+      'CSS',
+      'JavaScript',
+      'Supabase',
+      'PostgreSQL',
+      'Cloudflare Pages',
+      'Cloudflare R2',
+      'PWA',
+      'Web Push',
+      'Trello API',
+      'Google Drive API',
+    ],
+    stackNote:
+      'JavaScript sem framework. No Supabase: autenticação, Row Level Security, funções no banco e Realtime. Imagens e vídeos comprimidos no próprio navegador antes do envio (WebCodecs), guardados no R2 com exclusão automática.',
+    problem:
+      'A aprovação de conteúdo acontecia espalhada entre WhatsApp, Drive e e-mail. O cliente recebia o post como arquivo solto, sem ver como ia ficar no feed, e os pedidos de ajuste se perdiam no meio das conversas. A agência gastava tempo cobrando resposta, conferindo qual era a última versão e lembrando quem já tinha aprovado o quê.',
+    solution:
+      'Um portal com a marca da agência, onde cada conteúdo tem um lugar só para ser visto, discutido e aprovado.',
+    features: [
+      {
+        title: 'Prévia fiel ao Instagram',
+        body: 'Post, carrossel navegável, story e reels, com legenda ao vivo e as áreas que a interface do app cobre. A prévia é opcional, e o arquivo também pode ser visto cru.',
+      },
+      {
+        title: 'Aprovar ou pedir ajuste',
+        body: 'Um toque em ✦ Aprovado, ou um pedido de ajuste com texto, áudio e referências. Prazo de resposta definido pela agência, com aprovação automática quando vence.',
+      },
+      {
+        title: 'Conversa com áudio',
+        body: 'Chat estilo WhatsApp entre agência e cliente, com gravação de áudio no navegador, ondas sonoras e mensagens ligadas a cada conteúdo.',
+      },
+      {
+        title: 'Notificações com o app fechado',
+        body: 'O sistema se instala na tela inicial e avisa sobre conteúdo novo, mensagens e aprovações direto na barra do celular.',
+      },
+      {
+        title: 'Calendário de publicações',
+        body: 'Entregas e prazos de todos os clientes num calendário, sincronizado com os quadros do Trello da agência.',
+      },
+      {
+        title: 'Mídia pesada sem pesar',
+        body: 'Vídeos e imagens comprimidos antes de subir, com envio do original direto para o Drive do cliente.',
+      },
+    ],
+    featuresNote:
+      'Login com convite, suspensão de acesso no fim do contrato, perfis da agência e do cliente, e versionamento com histórico de novidades completam o sistema.',
+    decisions: [
+      {
+        title: 'Segurança no banco, não na tela',
+        body: 'Cada cliente só enxerga os próprios conteúdos por regras de Row Level Security. Ações sensíveis, como aprovar, passam por funções no banco que conferem dono e situação antes de gravar.',
+      },
+      {
+        title: 'Compressão no navegador',
+        body: 'Em vez de pagar um serviço de vídeo, a compressão usa o chip de vídeo do próprio computador (WebCodecs). Um vídeo de 40 MB vira menos de 3 MB em segundos.',
+      },
+      {
+        title: 'Armazenamento que não cresce sozinho',
+        body: 'Mídias aprovadas são apagadas automaticamente depois de 30 dias, porque o original fica no Drive. Os conteúdos da vitrine ficam numa pasta protegida dessa regra.',
+      },
+      {
+        title: 'Produção protegida',
+        body: 'Todo trabalho novo vai para uma branch de desenvolvimento com endereço de teste próprio, e só chega aos clientes depois de conferido, com número de versão e histórico de mudanças.',
+      },
+    ],
+    role: 'Levantei os requisitos com a agência, defini a arquitetura, as regras de negócio e a segurança, conduzi o design de interface e cuidei do deploy, das integrações e do versionamento. O código foi desenvolvido com apoio de IA (Claude Code), sob minha direção e revisão.',
+    // sistema com login: o link só aparece quando o href for preenchido
+    links: [{ label: 'Ver demonstração', href: '' }],
+    logo: '/logos/beacreative.svg',
+    // telas reais do sistema rodando com dados de demonstração (cliente fictício "Café Aurora")
+    cover: {
+      palette: { bg: '#4D3B31', ink: '#FFF5E9', accent: '#7B85CE' },
+      pattern: 'dots',
+      bannerLogo: '/logos/beacreative-claro.svg',
+      laptop: '/shots/aprov-calendario.jpg',
+      phone: '/shots/aprov-m-previa.jpg',
+      phoneWidths: [390, 780],
+      badge: '✦ Aprovado',
+    },
+    showcase: [
+      {
+        layout: 'duo',
+        caption:
+          'O calendário da agência no notebook e a lista do cliente no celular',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/aprov-calendario.jpg',
+            alt: 'Calendário de outubro com as entregas de todos os clientes, sincronizado com o Trello',
+          },
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-lista.jpg',
+            widths: [390, 780],
+            alt: 'Lista do cliente com os conteúdos esperando aprovação e os prazos',
+          },
+        ],
+      },
+      {
+        layout: 'single',
+        caption: 'A prévia do post, do jeito que vai ao ar',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-previa.jpg',
+            widths: [390, 780],
+            alt: 'Prévia de um carrossel como no Instagram, com os botões de aprovar e pedir ajuste',
+            annotations: [
+              {
+                area: { x: 6.4, y: 8.1, w: 87.2, h: 70.6 },
+                padding: 4,
+                // o cartão vai quase de ponta a ponta: o número fica na moldura
+                x: 101,
+                y: 10,
+                title: 'Prévia fiel ao Instagram',
+                body: 'Perfil, carrossel, curtidas e legenda montados como no app, pra aprovar o que vai ao ar e não um arquivo solto.',
+              },
+              {
+                area: { x: 82.6, y: 14.9, w: 8.6, h: 2.4 },
+                padding: 4,
+                x: 101,
+                y: 16.5,
+                title: 'Carrossel navegável',
+                body: 'O cliente passa as imagens como passaria no feed.',
+              },
+              {
+                area: { x: 4.1, y: 85, w: 91.8, h: 6 },
+                title: 'Aprovar ou pedir ajuste',
+                body: 'Um toque em ✦ Aprovado, com confirmação, ou um pedido de ajuste que abre a conversa já ligada a este conteúdo.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        layout: 'flow',
+        caption: 'Do aviso à aprovação: a lista, a prévia, a conversa e o registro',
+        screens: [
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-lista.jpg',
+            widths: [390, 780],
+            alt: 'Conteúdos esperando aprovação',
+          },
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-previa.jpg',
+            widths: [390, 780],
+            alt: 'Prévia do carrossel',
+          },
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-conversa.jpg',
+            widths: [390, 780],
+            alt: 'Conversa sobre o conteúdo, com mensagem de áudio',
+            annotations: [
+              {
+                area: { x: 23, y: 38.2, w: 73.4, h: 6.8 },
+                title: 'Áudio no navegador',
+                body: 'Gravado ali mesmo, com a onda sonora, e ligado à versão do conteúdo.',
+              },
+            ],
+          },
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-aprovado.jpg',
+            widths: [390, 780],
+            alt: 'Conteúdo aprovado, com a data da aprovação',
+          },
+        ],
+      },
+      {
+        layout: 'duo',
+        caption: 'A mesma conversa dos dois lados: a caixa de mensagens da agência e o chat do cliente',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/aprov-mensagens.jpg',
+            alt: 'Caixa de mensagens da agência, com a conversa do cliente aberta',
+          },
+          {
+            device: 'phone',
+            src: '/shots/aprov-m-conversa.jpg',
+            widths: [390, 780],
+            alt: 'A mesma conversa no celular do cliente',
+          },
+        ],
+      },
+      {
+        layout: 'single',
+        caption:
+          'Clientes com acesso ativo, suspensão a um clique e o espaço usado no armazenamento',
+        screens: [
+          {
+            device: 'laptop',
+            src: '/shots/aprov-clientes.jpg',
+            alt: 'Lista de clientes da agência com o uso do armazenamento',
+          },
+        ],
       },
     ],
   },

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { categoryLabel, projects, type Category, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
 import ProjectDialog from './ProjectDialog'
+import CoverArt from './CoverArt'
 import { asset } from '../lib/asset'
 
 type Filter = 'tudo' | Category
@@ -22,6 +24,52 @@ const FILTERS: { id: Filter; label: string }[] = [
 export default function Work() {
   const [filter, setFilter] = useState<Filter>('tudo')
   const [open, setOpen] = useState<{ project: Project; index: number } | null>(null)
+  // só o card que está abrindo/fechando ganha nome de transição: elemento com
+  // nome é desenhado por cima de tudo, e os outros cards cobririam o detalhe
+  const [emTransicao, setEmTransicao] = useState<string | null>(null)
+
+  // A capa do card "se abre" no banner do detalhe e volta pra ele ao fechar:
+  // as camadas têm o mesmo view-transition-name nos dois lugares (CoverArt.tsx)
+  // e as regras de ::view-transition em index.css fazem o resto.
+  const comTransicao = async (project: Project | undefined, mudar: () => void) => {
+    const semAnimacao =
+      !document.startViewTransition ||
+      !project?.cover ||
+      document.visibilityState !== 'visible' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (semAnimacao) return mudar()
+    // a logo do banner precisa estar pronta antes da "foto" do estado novo —
+    // mas no máximo 300 ms: decode() pode nunca resolver (aba oculta, rede lenta)
+    // e um clique que não abre nada é pior que uma logo que aparece atrasada
+    const logo = project.cover?.bannerLogo ?? project.logo
+    if (logo) {
+      const img = new Image()
+      img.src = asset(logo)
+      await Promise.race([
+        img.decode().catch(() => {}),
+        new Promise((r) => setTimeout(r, 300)),
+      ])
+    }
+    // se o navegador abortar a transição antes de aplicar a mudança (ex.: aba
+    // oculta), ela é aplicada do mesmo jeito, só que sem animação
+    flushSync(() => setEmTransicao(project.slug))
+    let aplicou = false
+    const transicao = document.startViewTransition(() => {
+      aplicou = true
+      flushSync(mudar)
+    })
+    transicao.ready.catch(() => {})
+    transicao.finished
+      .finally(() => {
+        if (!aplicou) mudar()
+        setEmTransicao(null)
+      })
+      .catch(() => {})
+  }
+
+  const abrir = (project: Project, index: number) =>
+    comTransicao(project, () => setOpen({ project, index }))
+  const fechar = () => comTransicao(open?.project, () => setOpen(null))
 
   const visible = useMemo(
     () =>
@@ -96,20 +144,26 @@ export default function Work() {
                 key={p.slug}
                 className={
                   wide
-                    ? `relative md:col-span-2 md:grid md:items-center md:gap-10 ${
+                    ? `group relative md:col-span-2 md:grid md:items-center md:gap-10 ${
                         flipped
                           ? 'md:grid-cols-[1fr_1.35fr]'
                           : 'md:grid-cols-[1.35fr_1fr]'
                       }`
-                    : 'relative flex flex-col'
+                    : 'group relative flex flex-col'
                 }
               >
                 <div
-                  className={`border-2 border-ink ${
+                  className={`border-2 border-ink transition duration-300 ease-snap group-hover:shadow-hard motion-safe:group-hover:-translate-y-1 ${
                     flipped ? 'md:order-2' : ''
                   }`}
                 >
-                  {p.image ? (
+                  {p.cover ? (
+                    <CoverArt
+                      project={{ ...p, cover: p.cover }}
+                      transicao={emTransicao === p.slug && open?.project.slug !== p.slug}
+                      className={featured ? 'aspect-[16/9]' : 'aspect-[160/112]'}
+                    />
+                  ) : p.image ? (
                     <img
                       src={asset(p.image)}
                       alt={`Tela do projeto ${p.title}`}
@@ -136,7 +190,8 @@ export default function Work() {
                       : 'contents'
                   }
                 >
-                  {p.logo && (
+                  {/* com capa desenhada, o logo já está nela */}
+                  {p.logo && !p.cover && (
                     <img
                       src={asset(p.logo)}
                       alt=""
@@ -153,12 +208,12 @@ export default function Work() {
                     className={`type-display ${
                       featured
                         ? 'text-4xl sm:text-5xl'
-                        : `text-3xl ${p.logo ? 'mt-3' : 'mt-5'}`
+                        : `text-3xl ${p.logo && !p.cover ? 'mt-3' : 'mt-5'}`
                     }`}
                   >
                     <button
                       type="button"
-                      onClick={() => setOpen({ project: p, index: i })}
+                      onClick={() => abrir(p, i)}
                       aria-label={`Ver detalhes de ${p.title}`}
                       className="text-left after:absolute after:inset-0 after:content-[''] hover:text-blue"
                     >
@@ -205,6 +260,7 @@ export default function Work() {
         project={open?.project ?? null}
         index={open?.index ?? 0}
         onClose={() => setOpen(null)}
+        onRequestClose={fechar}
       />
     </section>
   )

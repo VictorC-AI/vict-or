@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { categoryLabel, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
 import Lightbox, { type Shot } from './Lightbox'
+import Showcase from './Showcase'
+import { CoverBanner, camada, nomeDaCapa } from './CoverArt'
 import { asset } from '../lib/asset'
 
 /** quebra o texto em parágrafos onde houver linha em branco */
@@ -26,26 +28,45 @@ export default function ProjectDialog({
   project,
   index,
   onClose,
+  onRequestClose,
 }: {
   project: Project | null
   index: number
+  /** o diálogo já fechou (avisa o estado) */
   onClose: () => void
+  /** pedido de fechar (botão, Esc, clique fora): quem chama decide se anima */
+  onRequestClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement | null>(null)
   const [aberta, setAberta] = useState<number | null>(null)
 
-  // capa + galeria formam um conjunto só no visualizador
+  // telas da vitrine, só imagens (vídeo não abre no visualizador)
+  const telasDaVitrine: Shot[] = (project?.showcase ?? []).flatMap((b) =>
+    b.screens
+      .filter((s) => !/\.(mp4|webm)(\?|$)/i.test(s.src))
+      .map((s) => ({ src: s.src, caption: s.alt })),
+  )
+
+  // com banner de marca, o print da capa não aparece no topo
+  const printNoTopo = project && !project.cover ? project.image : undefined
+
+  // capa + vitrine (ou galeria) formam um conjunto só no visualizador
   const shots: Shot[] = project
     ? [
-        ...(project.image
-          ? [{ src: project.image, caption: project.summary }]
+        ...(printNoTopo
+          ? [{ src: printNoTopo, caption: project.summary }]
           : []),
-        ...(project.gallery ?? []),
+        ...(project.showcase ? telasDaVitrine : (project.gallery ?? [])),
       ]
     : []
-  const primeiraDaGaleria = project?.image ? 1 : 0
+  const primeiraDaGaleria = printNoTopo ? 1 : 0
+  const abrirTela = (src: string) => {
+    const i = shots.findIndex((s, j) => j >= primeiraDaGaleria && s.src === src)
+    if (i >= 0) setAberta(i)
+  }
 
-  useEffect(() => {
+  // layout effect: abre no mesmo commit, a tempo da View Transition vinda do card
+  useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
     if (project && !el.open) el.showModal()
@@ -56,9 +77,18 @@ export default function ProjectDialog({
     const el = ref.current
     if (!el) return
     const handleClose = () => onClose()
+    // Esc não fecha direto: vira pedido, pra poder animar a volta pro card
+    const handleCancel = (e: Event) => {
+      e.preventDefault()
+      onRequestClose()
+    }
     el.addEventListener('close', handleClose)
-    return () => el.removeEventListener('close', handleClose)
-  }, [onClose])
+    el.addEventListener('cancel', handleCancel)
+    return () => {
+      el.removeEventListener('close', handleClose)
+      el.removeEventListener('cancel', handleCancel)
+    }
+  }, [onClose, onRequestClose])
 
   // trava o scroll do fundo enquanto o detalhe está aberto
   useEffect(() => {
@@ -81,15 +111,23 @@ export default function ProjectDialog({
       ref={ref}
       aria-labelledby="detalhe-titulo"
       onClick={(e) => {
-        if (e.target === ref.current) ref.current?.close()
+        if (e.target === ref.current) onRequestClose()
       }}
       className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 backdrop:bg-ink/70 backdrop:backdrop-blur-[2px]"
     >
       {project && (
         <div className="flex min-h-full items-start justify-center p-0 sm:p-6">
-          <article className="w-full max-w-3xl border-2 border-ink bg-paper sm:my-6">
+          <article
+            className="w-full max-w-3xl border-2 border-ink bg-paper sm:my-6"
+            // com capa desenhada, o painel inteiro é a capa do card crescida
+            style={project.cover ? camada(nomeDaCapa(project.slug), 'capa') : undefined}
+          >
             <div className="relative">
-              {project.image ? (
+              {project.cover ? (
+                <div className="border-b-2 border-ink">
+                  <CoverBanner project={{ ...project, cover: project.cover }} />
+                </div>
+              ) : printNoTopo ? (
                 <button
                   type="button"
                   onClick={() => setAberta(0)}
@@ -97,7 +135,7 @@ export default function ProjectDialog({
                   className="block w-full cursor-zoom-in"
                 >
                   <img
-                    src={asset(project.image)}
+                    src={asset(printNoTopo)}
                     alt={`Tela do projeto ${project.title}`}
                     className="aspect-[16/9] w-full border-b-2 border-ink object-cover"
                   />
@@ -109,8 +147,11 @@ export default function ProjectDialog({
                   className="h-40 w-full border-b-2 border-ink sm:h-56"
                 />
               )}
-              <form method="dialog" className="absolute top-3 right-3">
+              {/* fundo creme e borda preta: legível sobre qualquer banner */}
+              <div className="absolute top-3 right-3 z-10">
                 <button
+                  type="button"
+                  onClick={onRequestClose}
                   className="shadow-hard-sm flex size-10 items-center justify-center border-2 border-ink bg-paper transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                   aria-label="Fechar detalhe"
                 >
@@ -123,11 +164,11 @@ export default function ProjectDialog({
                     />
                   </svg>
                 </button>
-              </form>
+              </div>
             </div>
 
             <div className="p-6 sm:p-10">
-              {project.logo && (
+              {project.logo && !project.cover && (
                 <img
                   src={asset(project.logo)}
                   alt=""
@@ -224,7 +265,21 @@ export default function ProjectDialog({
                 </section>
               )}
 
-              {project.gallery && project.gallery.length > 0 && (
+              {project.showcase && project.showcase.length > 0 && (
+                <section className="rule mt-9 pt-7">
+                  <h3 className="text-lg font-bold">Por dentro</h3>
+                  <p className="mt-1 text-sm text-muted">
+                    Toque numa tela para ampliar, ou num número para ler a nota.
+                  </p>
+                  <Showcase
+                    blocks={project.showcase}
+                    slug={project.slug}
+                    onOpen={abrirTela}
+                  />
+                </section>
+              )}
+
+              {!project.showcase && project.gallery && project.gallery.length > 0 && (
                 <section className="rule mt-9 pt-7">
                   <h3 className="text-lg font-bold">Outras telas</h3>
                   <p className="mt-1 text-sm text-muted">
@@ -273,9 +328,10 @@ export default function ProjectDialog({
                 )}
               </div>
 
-              {project.links && project.links.length > 0 && (
+              {/* link sem href (ex: demonstração ainda sem conta) fica escondido */}
+              {project.links && project.links.some((l) => l.href) && (
                 <div className="mt-8 flex flex-wrap gap-3">
-                  {project.links.map((l) => (
+                  {project.links.filter((l) => l.href).map((l) => (
                     <a
                       key={l.label}
                       href={l.href}
