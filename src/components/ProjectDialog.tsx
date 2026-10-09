@@ -4,6 +4,7 @@ import ProjectCover from './ProjectCover'
 import Lightbox, { type Shot } from './Lightbox'
 import Showcase from './Showcase'
 import { BotaoStory } from './CompartilharStory'
+import Reacoes from './Reacoes'
 import { CoverBanner, camada, nomeDaCapa } from './CoverArt'
 import { asset } from '../lib/asset'
 
@@ -346,6 +347,18 @@ export default function ProjectDialog({
                   ))}
                 </div>
               )}
+
+              <Reacoes
+                project={project}
+                onRecado={() => {
+                  onRequestClose()
+                  // depois que o detalhe fecha: o formulário já com o projeto
+                  setTimeout(
+                    () => window.dispatchEvent(new CustomEvent('deixar-recado', { detail: project.title })),
+                    450,
+                  )
+                }}
+              />
             </div>
           </article>
         </div>

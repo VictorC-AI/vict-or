@@ -1,10 +1,31 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { contact, profile } from '../data/site'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function Contact() {
   const [state, setState] = useState<State>('idle')
+  const mensagem = useRef<HTMLTextAreaElement | null>(null)
+
+  // "Deixar um recado" no detalhe de um projeto: traz a pessoa pra cá com o
+  // assunto já começado (sem apagar o que ela já tinha escrito)
+  useEffect(() => {
+    const aoPedirRecado = (e: Event) => {
+      const projeto = (e as CustomEvent<string>).detail
+      const campo = mensagem.current
+      if (!campo) return
+      // o campo da mensagem no meio da tela (no celular ele fica no fim do formulário)
+      campo.scrollIntoView({ block: 'center' })
+      const inicio = `Sobre o projeto ${projeto}: `
+      if (!campo.value.trim()) campo.value = inicio
+      else if (!campo.value.includes(inicio)) campo.value = `${inicio}\n\n${campo.value}`
+      setState('idle')
+      campo.focus({ preventScroll: true })
+      campo.setSelectionRange(campo.value.length, campo.value.length)
+    }
+    window.addEventListener('deixar-recado', aoPedirRecado)
+    return () => window.removeEventListener('deixar-recado', aoPedirRecado)
+  }, [])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -133,6 +154,7 @@ export default function Contact() {
             <label className="grid gap-2">
               <span className="font-semibold">O que você quer resolver</span>
               <textarea
+                ref={mensagem}
                 name="mensagem"
                 rows={5}
                 required
