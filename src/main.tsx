@@ -9,8 +9,24 @@ import '@fontsource/jetbrains-mono/500.css'
 
 import './index.css'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const raiz = createRoot(document.getElementById('root')!)
+const busca = new URLSearchParams(location.search)
+const render = busca.get('render')
+
+if (render) {
+  // imagens de compartilhamento (npm run imagens): carregado só neste modo,
+  // o site normal não baixa esse código
+  import('./render/Render').then(({ default: Render }) =>
+    raiz.render(
+      <StrictMode>
+        <Render tipo={render} slug={busca.get('projeto') ?? ''} />
+      </StrictMode>,
+    ),
+  )
+} else {
+  raiz.render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  )
+}

@@ -84,6 +84,8 @@ export interface Cover {
    * Vazio = usa o `logo` do projeto.
    */
   bannerLogo?: string
+  /** uma frase curta pro story do Instagram (o summary é longo demais pra ler em 5 s) */
+  frase?: string
 }
 
 export type Device = 'phone' | 'laptop'
@@ -149,6 +151,16 @@ export interface ShowcaseBlock {
   screens: Screen[]
   caption: string
 }
+
+/**
+ * Endereço público do site, com barra no fim. Usado nas páginas de cada
+ * projeto (link de prévia no WhatsApp/DM) e impresso nas imagens de story.
+ * Trocar aqui quando tiver domínio próprio.
+ */
+export const SITE_URL = 'https://victorc-ai.github.io/vict-or/'
+
+/** endereço de um projeto: abre o portfólio já com o detalhe aberto */
+export const urlDoProjeto = (slug: string) => `${SITE_URL}projetos/${slug}/`
 
 export const profile = {
   name: 'Victor Carvalho',
@@ -294,6 +306,7 @@ export const projects: Project[] = [
     cover: {
       palette: { bg: '#FFF5E9', ink: '#4D3B31', accent: '#7B85CE' },
       pattern: 'sparkle',
+      frase: 'Do link na bio a um site que mostra, explica e agenda sozinho.',
       laptop: '/shots/beacreative.jpg',
       phone: '/shots/bea-m-portfolio.jpg',
       phoneWidths: [390, 780],
@@ -510,6 +523,7 @@ export const projects: Project[] = [
     cover: {
       palette: { bg: '#1f4d40', ink: '#d8e7d4', accent: '#30705f' },
       pattern: 'neubauer',
+      frase: 'O estoque do laboratório, do jeito que se conta na bancada.',
       bannerLogo: '/logos/laeg-bio-claro.png',
       laptop: '/shots/laeg-panorama.jpg',
       phone: '/shots/laeg-m-lista.jpg',
@@ -767,6 +781,7 @@ export const projects: Project[] = [
     cover: {
       palette: { bg: '#4D3B31', ink: '#FFF5E9', accent: '#7B85CE' },
       pattern: 'dots',
+      frase: 'Cada post visto como vai ao ar e aprovado num toque.',
       bannerLogo: '/logos/beacreative-claro.svg',
       laptop: '/shots/aprov-calendario.jpg',
       phone: '/shots/aprov-m-previa.jpg',

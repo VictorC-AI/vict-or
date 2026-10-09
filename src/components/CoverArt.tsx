@@ -10,7 +10,7 @@ const ESTRELA =
  * Desenhos de fundo num viewBox 160 × h (100 no card). O banner é mais baixo:
  * passa h menor e os ✦ descem/sobem junto, em vez de serem cortados.
  */
-function Padrao({ cover, id, h = 100 }: { cover: Cover; id: string; h?: number }) {
+export function Padrao({ cover, id, h = 100 }: { cover: Cover; id: string; h?: number }) {
   const { ink, accent } = cover.palette
   const y = (v: number) => (v * h) / 100
   // no banner o botão de fechar ocupa o canto: o ✦ grande sai de baixo dele

@@ -3,6 +3,7 @@ import { categoryLabel, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
 import Lightbox, { type Shot } from './Lightbox'
 import Showcase from './Showcase'
+import { BotaoStory } from './CompartilharStory'
 import { CoverBanner, camada, nomeDaCapa } from './CoverArt'
 import { asset } from '../lib/asset'
 
@@ -198,6 +199,7 @@ export default function ProjectDialog({
                   </div>
                 )}
               </dl>
+              <BotaoStory project={project} />
 
               <div className="mt-8 space-y-7">
                 {blocks.map((b) => (

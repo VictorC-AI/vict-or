@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { categoryLabel, projects, type Category, type Project } from '../data/site'
 import ProjectCover from './ProjectCover'
 import ProjectDialog from './ProjectDialog'
 import CoverArt from './CoverArt'
+import { CompartilharTrabalhos } from './CompartilharStory'
 import { asset } from '../lib/asset'
+import { caminhoDoProjeto, caminhoDoSite, projetoNoEndereco } from '../lib/rota'
 
 type Filter = 'tudo' | Category
 
@@ -67,9 +69,70 @@ export default function Work() {
       .catch(() => {})
   }
 
-  const abrir = (project: Project, index: number) =>
+  // ---------------------------------------------------------------- endereço
+  // Cada projeto tem endereço próprio (/projetos/<slug>/). Abrir pelo card
+  // empilha esse endereço no histórico: o "voltar" do celular fecha o detalhe.
+  const aberto = useRef(open)
+  aberto.current = open
+  // chegou direto pelo link (WhatsApp, DM): fechar não pode "voltar" pra fora do site
+  const veioPeloLink = useRef(false)
+
+  const indiceDe = (slug: string) => projects.findIndex((p) => p.slug === slug)
+
+  useEffect(() => {
+    const slug = projetoNoEndereco()
+    const i = slug ? indiceDe(slug) : -1
+    if (i >= 0) {
+      veioPeloLink.current = true
+      history.replaceState({ projeto: slug }, '', caminhoDoProjeto(slug!))
+      setOpen({ project: projects[i], index: i })
+    } else if (slug) {
+      // projeto que não existe (ou saiu do portfólio): mostra o portfólio
+      history.replaceState(null, '', caminhoDoSite())
+    }
+
+    const aoNavegar = () => {
+      const slug = (history.state as { projeto?: string } | null)?.projeto ?? projetoNoEndereco()
+      const i = slug ? indiceDe(slug) : -1
+      const atual = aberto.current
+      if (i >= 0 && atual?.project.slug !== slug) {
+        comTransicao(projects[i], () => setOpen({ project: projects[i], index: i }))
+      } else if (i < 0 && atual) {
+        comTransicao(atual.project, () => setOpen(null))
+      }
+    }
+    window.addEventListener('popstate', aoNavegar)
+    return () => window.removeEventListener('popstate', aoNavegar)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // título da aba acompanha o detalhe aberto
+  useEffect(() => {
+    const original = document.title
+    if (open) document.title = `${open.project.title} — vict.<OR>`
+    return () => {
+      document.title = original
+    }
+  }, [open])
+
+  const abrir = (project: Project, index: number) => {
+    history.pushState({ projeto: project.slug }, '', caminhoDoProjeto(project.slug))
     comTransicao(project, () => setOpen({ project, index }))
-  const fechar = () => comTransicao(open?.project, () => setOpen(null))
+  }
+
+  const fechar = () => {
+    if (!veioPeloLink.current && (history.state as { projeto?: string } | null)?.projeto) {
+      // desfaz o pushState do abrir; o popstate acima fecha com a animação
+      history.back()
+      return
+    }
+    // chegou pelo link: volta pro endereço do portfólio e mostra os trabalhos
+    veioPeloLink.current = false
+    history.replaceState(null, '', caminhoDoSite())
+    // rola antes de animar: o detalhe encolhe de volta até o card, já à vista
+    document.getElementById('trabalhos')?.scrollIntoView({ block: 'start', behavior: 'instant' })
+    comTransicao(open?.project, () => setOpen(null))
+  }
 
   const visible = useMemo(
     () =>
@@ -94,6 +157,9 @@ export default function Work() {
               Clique em qualquer um para ver o problema, a decisão técnica e o
               resultado.
             </p>
+            <div className="mt-6">
+              <CompartilharTrabalhos />
+            </div>
           </div>
 
           {FILTERS.length > 2 && (
