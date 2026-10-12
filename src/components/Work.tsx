@@ -6,6 +6,7 @@ import ProjectDialog from './ProjectDialog'
 import CoverArt from './CoverArt'
 import Reveal from './Reveal'
 import { CompartilharTrabalhos } from './CompartilharStory'
+import { Curtir } from './Reacoes'
 import { asset } from '../lib/asset'
 import { caminhoDoProjeto, caminhoDoSite, projetoNoEndereco } from '../lib/rota'
 
@@ -308,6 +309,7 @@ export default function Work() {
                         {p.status}
                       </span>
                     )}
+                    <Curtir project={p} compacto />
                   </div>
                 </div>
               </Reveal>
