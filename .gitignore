@@ -8,3 +8,8 @@ dist-ssr
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+
+# skills instaladas localmente (npx skills add)
+.agents/
+.claude/
+skills-lock.json
