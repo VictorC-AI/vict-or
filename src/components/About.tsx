@@ -1,11 +1,12 @@
 import { about } from '../data/site'
+import Reveal from './Reveal'
 
 export default function About() {
   return (
     <section id="sobre" className="bg-cream">
       <div className="shell py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-[1fr_22rem] lg:gap-20">
-          <div>
+          <Reveal>
             <h2 className="type-display text-big">{about.title}</h2>
             <div className="mt-8 space-y-6">
               {about.paragraphs.map((p) => (
@@ -14,9 +15,13 @@ export default function About() {
                 </p>
               ))}
             </div>
-          </div>
+          </Reveal>
 
-          <aside className="shadow-hard-blue self-start border-2 border-ink bg-paper p-7">
+          <Reveal
+            as="aside"
+            ordem={2}
+            className="shadow-hard-blue self-start border-2 border-ink bg-paper p-7"
+          >
             <h3 className="text-lg font-bold">Como eu trabalho</h3>
             <ul className="mt-5 space-y-4">
               {about.principles.map((item) => (
@@ -29,7 +34,7 @@ export default function About() {
                 </li>
               ))}
             </ul>
-          </aside>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -118,7 +118,7 @@ export default function DeviceFrame({
   if (device === 'phone') {
     return (
       <div
-        className={`@container shadow-hard rounded-[15%/7%] border-2 border-ink bg-ink ${className}`}
+        className={`tema-fixo @container shadow-hard rounded-[15%/7%] border-2 border-ink bg-ink ${className}`}
       >
         {/* cqw = % da largura do próprio aparelho; % puro mediria o pai */}
         <div className="p-[3.5cqw]">
@@ -135,7 +135,7 @@ export default function DeviceFrame({
   }
 
   return (
-    <div className={`@container ${className}`}>
+    <div className={`tema-fixo @container ${className}`}>
       <div className="mx-[6cqw] rounded-t-[0.9rem] border-2 border-ink bg-ink p-[2cqw] pb-[2.6cqw]">
         <div className="relative">{tela}</div>
       </div>

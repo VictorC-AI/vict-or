@@ -18,17 +18,23 @@ export function Wordmark({
   tone?: 'ink' | 'cream'
   className?: string
 }) {
-  const src =
-    tone === 'ink' ? '/brand/wordmark-claro.png' : '/brand/wordmark-escuro.png'
+  const claro = '/brand/wordmark-claro.png'
+  const escuro = '/brand/wordmark-escuro.png'
+  const src = tone === 'ink' ? claro : escuro
+  // no modo escuro as faixas trocam de cor, então a versão do logo troca junto
+  const noEscuro = tone === 'ink' ? escuro : claro
 
   return (
-    <img
-      src={asset(src)}
-      alt="vict.<OR>"
-      width={1200}
-      height={365}
-      className={`h-7 w-auto sm:h-8 ${className}`}
-    />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcSet={asset(noEscuro)} />
+      <img
+        src={asset(src)}
+        alt="vict.<OR>"
+        width={1200}
+        height={365}
+        className={`h-7 w-auto sm:h-8 ${className}`}
+      />
+    </picture>
   )
 }
 

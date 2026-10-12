@@ -71,7 +71,7 @@ export default function Lightbox({
     <dialog
       ref={ref}
       aria-label="Telas do projeto"
-      className="on-dark m-0 h-dvh max-h-none w-full max-w-none bg-ink p-0 backdrop:bg-ink"
+      className="tema-fixo on-dark m-0 h-dvh max-h-none w-full max-w-none bg-ink p-0 backdrop:bg-ink"
     >
       {atual && (
         <div className="flex h-dvh flex-col">

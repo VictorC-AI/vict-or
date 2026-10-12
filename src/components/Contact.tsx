@@ -1,31 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { contact, profile } from '../data/site'
+import Reveal from './Reveal'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function Contact() {
   const [state, setState] = useState<State>('idle')
-  const mensagem = useRef<HTMLTextAreaElement | null>(null)
-
-  // "Deixar um recado" no detalhe de um projeto: traz a pessoa pra cá com o
-  // assunto já começado (sem apagar o que ela já tinha escrito)
-  useEffect(() => {
-    const aoPedirRecado = (e: Event) => {
-      const projeto = (e as CustomEvent<string>).detail
-      const campo = mensagem.current
-      if (!campo) return
-      // o campo da mensagem no meio da tela (no celular ele fica no fim do formulário)
-      campo.scrollIntoView({ block: 'center' })
-      const inicio = `Sobre o projeto ${projeto}: `
-      if (!campo.value.trim()) campo.value = inicio
-      else if (!campo.value.includes(inicio)) campo.value = `${inicio}\n\n${campo.value}`
-      setState('idle')
-      campo.focus({ preventScroll: true })
-      campo.setSelectionRange(campo.value.length, campo.value.length)
-    }
-    window.addEventListener('deixar-recado', aoPedirRecado)
-    return () => window.removeEventListener('deixar-recado', aoPedirRecado)
-  }, [])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -42,7 +22,7 @@ export default function Contact() {
         String(data.get('mensagem') ?? ''),
       ].join('\n')
       window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(
-        `Projeto — ${data.get('nome')}`,
+        `Projeto: ${data.get('nome')}`,
       )}&body=${encodeURIComponent(body)}`
       setState('sent')
       return
@@ -59,7 +39,7 @@ export default function Contact() {
     for (const [k, v] of Object.entries(contact.formHiddenFields ?? {})) {
       data.set(k, v)
     }
-    data.set('subject', `Novo contato pelo site — ${data.get('nome')}`)
+    data.set('subject', `Novo contato pelo site: ${data.get('nome')}`)
 
     setState('sending')
     try {
@@ -80,10 +60,10 @@ export default function Contact() {
     'w-full border-2 border-cream/35 bg-transparent px-4 py-3 text-cream placeholder:text-cream/45 focus:border-cream focus:outline-none'
 
   return (
-    <section id="contato" className="on-dark bg-blue text-cream">
+    <section id="contato" className="tema-fixo on-dark bg-blue text-cream">
       <div className="shell py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-          <div>
+          <Reveal>
             <h2 className="type-display text-big">{contact.title}</h2>
             <p className="text-lead mt-6 max-w-[42ch] text-cream/85">
               {contact.lead}
@@ -107,7 +87,7 @@ export default function Contact() {
                 </a>
               )}
             </div>
-          </div>
+          </Reveal>
 
           <form onSubmit={handleSubmit} className="grid gap-5">
             {/* honeypot — invisível pra gente, irresistível pra robô */}
@@ -154,7 +134,6 @@ export default function Contact() {
             <label className="grid gap-2">
               <span className="font-semibold">O que você quer resolver</span>
               <textarea
-                ref={mensagem}
                 name="mensagem"
                 rows={5}
                 required

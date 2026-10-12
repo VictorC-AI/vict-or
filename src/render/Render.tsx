@@ -5,6 +5,8 @@ import OgArt from './OgArt'
 // a página inteira é a imagem: sem barra de rolagem nem espaço reservado pra ela
 document.documentElement.style.scrollbarGutter = 'auto'
 document.documentElement.style.overflow = 'hidden'
+// as imagens de compartilhamento são sempre a versão clara da marca
+document.documentElement.dataset.tema = 'claro'
 
 /**
  * Modo de renderização das imagens de compartilhamento — não é uma página do

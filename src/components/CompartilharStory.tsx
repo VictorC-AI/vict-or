@@ -152,7 +152,7 @@ export function CompartilharTrabalhos() {
         onClick={(e) => {
           if (e.target === ref.current) ref.current?.close()
         }}
-        className="m-auto w-[min(34rem,calc(100%-2rem))] border-2 border-ink bg-paper p-0 backdrop:bg-ink/70"
+        className="m-auto w-[min(34rem,calc(100%-2rem))] border-2 border-ink bg-paper p-0 backdrop:bg-coal/70"
       >
         <div className="p-6">
           <h3 id="compartilhar-titulo" className="type-display text-2xl">
@@ -191,7 +191,7 @@ export function CompartilharTrabalhos() {
                     {marcado && (
                       <span
                         aria-hidden="true"
-                        className="absolute top-1.5 left-1.5 flex size-6 items-center justify-center rounded-full border-2 border-ink bg-blue font-mono text-xs font-bold text-cream"
+                        className="absolute top-1.5 left-1.5 flex size-6 items-center justify-center rounded-full border-2 border-ink bg-blue font-mono text-xs font-bold text-bone"
                       >
                         {ordem + 1}
                       </span>
@@ -213,7 +213,7 @@ export function CompartilharTrabalhos() {
             <button
               type="button"
               disabled={!valido || ocupado}
-              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-sm font-bold text-cream transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50"
+              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-sm font-bold text-bone transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50"
               onClick={async () => {
                 setOcupado(true)
                 try {
