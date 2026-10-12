@@ -28,7 +28,7 @@ export default function ProjectCover({
   return (
     <svg
       viewBox="0 0 160 112"
-      className={className}
+      className={`tema-fixo ${className}`}
       aria-hidden="true"
       preserveAspectRatio="xMidYMid slice"
     >

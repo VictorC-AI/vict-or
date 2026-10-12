@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState, useSyncExternalStore, type FormEvent } from 'react'
 import type { Project } from '../data/site'
-import { alternarCurtida, contagens, curtidosAqui, ErroCurtida } from '../lib/curtidas'
-
-// uma busca por visita, dividida entre todos os projetos abertos
-let contagensDaVisita: Promise<Record<string, number>> | null = null
-const buscarContagens = () => (contagensDaVisita ??= contagens().catch((): Record<string, number> => ({})))
+import {
+  alternar,
+  assinar,
+  carregarTotais,
+  deixarRecado,
+  ErroCurtida,
+  estadoAtual,
+} from '../lib/curtidas'
 
 function Coracao({ cheio }: { cheio: boolean }) {
   return (
@@ -21,43 +24,31 @@ function Coracao({ cheio }: { cheio: boolean }) {
 }
 
 /**
- * Fim do detalhe: curtir e deixar um recado (no lugar de comentários abertos).
- * O número de curtidas só aparece a partir de 10 — abaixo disso o banco nem
- * devolve o total.
+ * Botão de curtir. Fica no card de cada projeto e no detalhe; os dois leem o
+ * mesmo estado (lib/curtidas.ts). O número só aparece a partir de 10: abaixo
+ * disso o banco nem devolve o total.
  */
-export default function Reacoes({
+export function Curtir({
   project,
-  onRecado,
+  compacto = false,
 }: {
   project: Project
-  onRecado: () => void
+  compacto?: boolean
 }) {
-  const [curtido, setCurtido] = useState(() => curtidosAqui().has(project.slug))
-  const [total, setTotal] = useState<number | null>(null)
+  const { curtidos, totais } = useSyncExternalStore(assinar, estadoAtual)
+  const curtido = curtidos.has(project.slug)
+  const total = totais[project.slug]
   const [ocupado, setOcupado] = useState(false)
   const [aviso, setAviso] = useState('')
 
-  useEffect(() => {
-    setCurtido(curtidosAqui().has(project.slug))
-    setAviso('')
-    let vivo = true
-    buscarContagens().then((c) => vivo && setTotal(c[project.slug] ?? null))
-    return () => {
-      vivo = false
-    }
-  }, [project.slug])
+  useEffect(carregarTotais, [])
 
-  const alternar = async () => {
-    const novo = !curtido
-    setCurtido(novo) // na hora; volta atrás se o servidor recusar
+  const clicar = async () => {
     setOcupado(true)
     setAviso('')
     try {
-      const t = await alternarCurtida(project.slug, novo)
-      setTotal(t)
-      contagensDaVisita = null
+      await alternar(project.slug)
     } catch (e) {
-      setCurtido(!novo)
       setAviso(e instanceof ErroCurtida ? e.message : 'Não deu pra registrar agora.')
     } finally {
       setOcupado(false)
@@ -65,38 +56,139 @@ export default function Reacoes({
   }
 
   return (
-    <section className="rule mt-9 pt-7" aria-labelledby="reacoes-titulo">
-      <h3 id="reacoes-titulo" className="text-lg font-bold">
+    <span className="relative z-10 inline-flex flex-col items-start">
+      <button
+        type="button"
+        aria-pressed={curtido}
+        aria-label={compacto ? `Curtir ${project.title}` : undefined}
+        disabled={ocupado}
+        onClick={clicar}
+        className={`inline-flex items-center gap-2 border-2 border-ink font-bold transition-transform active:scale-[0.96] ${
+          compacto
+            ? 'px-2.5 py-1 text-xs'
+            : 'shadow-hard-sm px-4 py-2 text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+        } ${curtido ? 'bg-blue text-bone' : 'bg-paper hover:bg-blue-soft'}`}
+      >
+        <Coracao cheio={curtido} />
+        {curtido ? 'Curtido' : 'Curtir'}
+        {total != null && (
+          <span className={`font-mono text-xs ${curtido ? 'text-bone/75' : 'text-muted'}`}>
+            {total} <span className="sr-only">curtidas</span>
+          </span>
+        )}
+      </button>
+      <span aria-live="polite" className="text-xs text-muted empty:hidden">
+        {aviso}
+      </span>
+    </span>
+  )
+}
+
+/**
+ * Fim do detalhe: curtir e um feedback sobre o projeto. O feedback chega por
+ * e-mail pro Victor e não aparece no site; não é o formulário de orçamento.
+ */
+export default function Reacoes({ project }: { project: Project }) {
+  const id = useId()
+  const [nome, setNome] = useState('')
+  const [texto, setTexto] = useState('')
+  const [estado, setEstado] = useState<'livre' | 'enviando' | 'enviado' | 'erro'>('livre')
+  const [erro, setErro] = useState('')
+
+  // trocou de projeto com o detalhe aberto: formulário limpo
+  useEffect(() => {
+    setNome('')
+    setTexto('')
+    setEstado('livre')
+    setErro('')
+  }, [project.slug])
+
+  const enviar = async (e: FormEvent) => {
+    e.preventDefault()
+    setEstado('enviando')
+    setErro('')
+    try {
+      await deixarRecado(project.slug, nome, texto)
+      setEstado('enviado')
+      setTexto('')
+    } catch (e) {
+      setEstado('erro')
+      setErro(e instanceof ErroCurtida ? e.message : 'Não deu pra enviar agora.')
+    }
+  }
+
+  const campo =
+    'w-full border-2 border-ink bg-cream px-3.5 py-2.5 text-ink placeholder:text-muted focus:outline-none focus-visible:border-blue'
+
+  return (
+    <section className="rule mt-9 pt-7" aria-labelledby={`${id}-titulo`}>
+      <h3 id={`${id}-titulo`} className="text-lg font-bold">
         Gostou do projeto?
       </h3>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          aria-pressed={curtido}
-          disabled={ocupado}
-          onClick={alternar}
-          className={`shadow-hard-sm inline-flex items-center gap-2 border-2 border-ink px-4 py-2 text-sm font-bold transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
-            curtido ? 'bg-blue text-cream' : 'bg-paper'
-          }`}
-        >
-          <Coracao cheio={curtido} />
-          {curtido ? 'Curtido' : 'Curtir'}
-          {total != null && (
-            <span className={`font-mono text-xs ${curtido ? 'text-cream/75' : 'text-muted'}`}>
-              {total} <span className="sr-only">curtidas</span>
-            </span>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={onRecado}
-          className="shadow-hard-sm inline-flex items-center gap-2 border-2 border-ink bg-paper px-4 py-2 text-sm font-bold transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
-        >
-          Deixar um recado
-        </button>
+      <div className="mt-4">
+        <Curtir project={project} />
       </div>
-      <p aria-live="polite" className="mt-2 min-h-5 text-sm text-muted">
-        {aviso}
+
+      {estado === 'enviado' ? (
+        <p role="status" className="mt-8 max-w-[52ch] leading-relaxed">
+          <span className="font-bold">Valeu!</span> Seu feedback chegou pra mim.
+          {' '}
+          <button
+            type="button"
+            onClick={() => setEstado('livre')}
+            className="font-bold underline underline-offset-4 hover:text-blue"
+          >
+            Escrever outro
+          </button>
+        </p>
+      ) : (
+        <form onSubmit={enviar} className="mt-8 grid max-w-xl gap-4">
+          <label className="grid gap-2">
+            <span className="font-semibold">O que você achou?</span>
+            <textarea
+              required
+              minLength={3}
+              maxLength={1000}
+              rows={3}
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              placeholder="O que chamou atenção, o que ficou confuso, o que você mudaria."
+              className={`${campo} resize-y`}
+            />
+          </label>
+          <label className="grid gap-2">
+            <span className="font-semibold">
+              Seu nome <span className="font-normal text-muted">(opcional)</span>
+            </span>
+            <input
+              maxLength={60}
+              autoComplete="name"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className={campo}
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              type="submit"
+              disabled={estado === 'enviando'}
+              className="shadow-hard-sm border-2 border-ink bg-ink px-5 py-2.5 font-bold text-cream transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-60"
+            >
+              {estado === 'enviando' ? 'Enviando…' : 'Enviar feedback'}
+            </button>
+            {erro && (
+              <p role="alert" className="text-sm font-semibold text-ink">
+                {erro}
+              </p>
+            )}
+          </div>
+        </form>
+      )}
+
+      <p className="mt-6 max-w-[60ch] text-sm leading-relaxed text-muted">
+        O feedback chega só pra mim e não aparece no site. Pra contar um voto por
+        pessoa, guardo um código aleatório neste navegador. Sem cookies e sem
+        rastreamento.
       </p>
     </section>
   )

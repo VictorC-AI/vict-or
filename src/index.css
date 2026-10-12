@@ -13,6 +13,9 @@
   --color-blue: #233dff;
   --color-blue-deep: #1526c4;
   --color-blue-soft: #d9ddff;
+  /* creme e preto que não trocam no modo escuro: texto sobre o azul */
+  --color-bone: #f4efe6;
+  --color-coal: #000000;
 
   --font-sans:
     'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, -apple-system,
@@ -32,6 +35,35 @@
 
   --radius-tile: 26%;
   --ease-snap: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* ------------------------------------------------------------------
+   Modo escuro: a marca tem as duas versões (logo creme sobre preto), então
+   o escuro é a mesma página com creme e preto trocados. As faixas continuam
+   alternando, só que invertidas. data-tema="claro" desliga (imagens de
+   compartilhamento); .tema-fixo segura a versão clara num pedaço da página
+   (capas, aparelhos, contato em azul, visualizador de telas).
+   ------------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema='claro']) {
+    color-scheme: dark;
+    --color-cream: #000000;
+    --color-ink: #f4efe6;
+    --color-paper: #121212;
+    --color-sand: #2b2924;
+    --color-muted: #a39d92;
+    --color-blue-soft: #1d2666;
+  }
+}
+
+.tema-fixo {
+  color-scheme: light;
+  --color-cream: #f4efe6;
+  --color-ink: #000000;
+  --color-paper: #fbf8f2;
+  --color-sand: #e4ddd0;
+  --color-muted: #6a645a;
+  --color-blue-soft: #d9ddff;
 }
 
 /* ------------------------------------------------------------------
@@ -57,7 +89,7 @@
 
   ::selection {
     background-color: var(--color-blue);
-    color: var(--color-cream);
+    color: var(--color-bone);
   }
 
   :focus-visible {
@@ -69,6 +101,16 @@
   /* Em blocos escuros o foco azul some contra o preto: usa creme. */
   .on-dark :focus-visible {
     outline-color: var(--color-cream);
+  }
+
+  /* no escuro o azul some contra o fundo preto: o foco usa a cor do texto */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-tema='claro']) :focus-visible {
+      outline-color: var(--color-ink);
+    }
+    :root:not([data-tema='claro']) .on-dark :focus-visible {
+      outline-color: var(--color-cream);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -143,7 +185,7 @@
 }
 
 /* ------------------------------------------------------------------
-   Animações (uma só, na abertura)
+   Animações: a entrada do topo e os blocos subindo ao rolar
    ------------------------------------------------------------------ */
 @keyframes rise {
   from {
@@ -158,6 +200,17 @@
 
 .rise {
   animation: rise 0.75s var(--ease-snap) both;
+}
+
+/* o topo entra em sequência: título, texto, botões, fatos */
+.rise-2 {
+  animation-delay: 0.12s;
+}
+.rise-3 {
+  animation-delay: 0.22s;
+}
+.rise-4 {
+  animation-delay: 0.32s;
 }
 
 /* Entrada ao rolar: useReveal() põe data-visivel quando o bloco aparece. */

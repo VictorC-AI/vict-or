@@ -82,3 +82,74 @@ export async function alternarCurtida(slug: string, curtir: boolean): Promise<nu
   lembrar(slug, curtir)
   return total
 }
+
+// ------------------------------------------------------------------ estado
+// O coração aparece no card e no detalhe ao mesmo tempo: os dois leem daqui,
+// então curtir num lado acende o outro na hora.
+
+type Estado = { curtidos: Set<string>; totais: Record<string, number> }
+let estado: Estado = { curtidos: curtidosAqui(), totais: {} }
+const ouvintes = new Set<() => void>()
+const avisar = () => ouvintes.forEach((f) => f())
+
+export function assinar(f: () => void) {
+  ouvintes.add(f)
+  return () => {
+    ouvintes.delete(f)
+  }
+}
+export const estadoAtual = () => estado
+
+// uma busca por visita, dividida entre todos os botões da página
+let buscou = false
+export function carregarTotais() {
+  if (buscou) return
+  buscou = true
+  contagens()
+    .then((totais) => {
+      estado = { ...estado, totais }
+      avisar()
+    })
+    .catch(() => {
+      buscou = false
+    })
+}
+
+/** curte/descurte já mudando a tela; volta atrás se o banco recusar */
+export async function alternar(slug: string): Promise<void> {
+  const curtir = !estado.curtidos.has(slug)
+  const antes = estado
+  const curtidos = new Set(estado.curtidos)
+  if (curtir) curtidos.add(slug)
+  else curtidos.delete(slug)
+  estado = { ...estado, curtidos }
+  avisar()
+  try {
+    const total = await alternarCurtida(slug, curtir)
+    const totais = { ...estado.totais }
+    if (total == null) delete totais[slug]
+    else totais[slug] = total
+    estado = { ...estado, totais }
+    avisar()
+  } catch (e) {
+    estado = antes
+    avisar()
+    throw e
+  }
+}
+
+// ------------------------------------------------------------------ recados
+
+/**
+ * Feedback sobre um projeto: vai pro banco (função deixar_recado em
+ * supabase/migrations/…_avisos_e_recados.sql) e chega por e-mail pro Victor.
+ * Não aparece no site.
+ */
+export async function deixarRecado(slug: string, nome: string, texto: string): Promise<void> {
+  await rpc<null>('deixar_recado', {
+    p_projeto: slug,
+    p_visitante: visitante(),
+    p_nome: nome.trim() || null,
+    p_texto: texto.trim(),
+  })
+}

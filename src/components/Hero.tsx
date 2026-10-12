@@ -35,18 +35,18 @@ export default function Hero() {
         </h1>
 
         <div className="mt-9 grid gap-9 sm:mt-12 lg:grid-cols-[minmax(0,34rem)_auto] lg:items-end lg:gap-16">
-          <p className="text-lead max-w-[46ch] text-ink/80">{hero.lead}</p>
+          <p className="text-lead rise rise-2 max-w-[46ch] text-ink/80">{hero.lead}</p>
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <div className="rise rise-3 flex flex-wrap items-center gap-3 sm:gap-4">
             <a
               href={hero.primaryCta.href}
-              className="shadow-hard border-2 border-ink bg-ink px-6 py-3.5 text-base font-bold text-cream transition-transform duration-150 ease-[var(--ease-snap)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none sm:text-lg"
+              className="shadow-hard border-2 border-ink bg-ink px-6 py-3.5 text-base font-bold text-cream transition-transform duration-150 ease-[var(--ease-snap)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none active:translate-x-[6px] active:translate-y-[6px] sm:text-lg"
             >
               {hero.primaryCta.label}
             </a>
             <a
               href={hero.secondaryCta.href}
-              className="border-2 border-ink px-6 py-3.5 text-base font-bold transition-colors hover:bg-ink hover:text-cream sm:text-lg"
+              className="border-2 border-ink px-6 py-3.5 text-base font-bold transition-[color,background-color,transform] duration-150 hover:bg-ink hover:text-cream active:scale-[0.98] sm:text-lg"
             >
               {hero.secondaryCta.label}
             </a>
@@ -55,7 +55,7 @@ export default function Hero() {
       </div>
 
       <div className="shell relative">
-        <dl className="rule grid grid-cols-2 gap-x-8 gap-y-6 py-7 sm:grid-cols-3 sm:py-8">
+        <dl className="rule rise rise-4 grid grid-cols-2 gap-x-8 gap-y-6 py-7 sm:grid-cols-3 sm:py-8">
           {hero.facts.map((f) => (
             <div key={f.label}>
               <dt className="text-sm text-muted">{f.label}</dt>
