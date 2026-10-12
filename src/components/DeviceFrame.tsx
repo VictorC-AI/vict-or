@@ -14,7 +14,7 @@ const SIZES = {
 
 const ehVideo = (src: string) => /\.(mp4|webm)(\?|$)/i.test(src)
 
-function srcSet(src: string, widths?: number[]) {
+export function srcSet(src: string, widths?: number[]) {
   if (!widths?.length) return undefined
   // a maior largura é o próprio src; as outras têm o sufixo -<largura>
   const maior = Math.max(...widths)
