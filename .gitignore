@@ -16,3 +16,5 @@ dist-ssr
 skills-lock.json
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+# grafo gerado pelo /graphify
+graphify-out/
