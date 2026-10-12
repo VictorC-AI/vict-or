@@ -249,55 +249,6 @@
   transform: none;
 }
 
-/* ------------------------------------------------------------------
-   Card → detalhe (View Transitions, "container transform").
-   A capa do card e o painel do detalhe têm o mesmo nome (nomeDaCapa em
-   CoverArt.tsx): a caixa cresce de um pro outro, recortando o conteúdo,
-   enquanto a capa se dissolve no banner — mesma cor, mesmo padrão.
-   Fechar roda o mesmo roteiro ao contrário.
-   ------------------------------------------------------------------ */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.4s;
-}
-
-::view-transition-group(.capa) {
-  z-index: 1;
-  overflow: clip;
-  /* fundo do painel: onde a foto do card (mais baixa) não alcança, a caixa
-     continua sólida em vez de deixar ver a página por trás */
-  background: var(--color-paper);
-  animation-duration: 0.5s;
-  animation-timing-function: var(--ease-snap);
-}
-
-/* presos no topo e na largura da caixa: ao crescer, o banner aparece
-   primeiro e o resto do detalhe vai sendo revelado de cima pra baixo */
-::view-transition-old(.capa),
-::view-transition-new(.capa) {
-  width: 100%;
-  height: auto;
-  /* o navegador põe isto dentro da animação padrão; trocando a animação,
-     precisa vir explícito, senão a caixa fica translúcida no meio */
-  mix-blend-mode: plus-lighter;
-}
-
-/* tempos idênticos e lineares: somadas (plus-lighter), as duas fotos dão
-   sempre 100% de opacidade — a caixa nunca fica transparente no meio */
-::view-transition-old(.capa) {
-  animation: vt-sai 0.2s linear both;
-}
-::view-transition-new(.capa) {
-  animation: vt-entra 0.2s linear both;
-}
-
-@keyframes vt-sai {
-  to { opacity: 0; }
-}
-@keyframes vt-entra {
-  from { opacity: 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
