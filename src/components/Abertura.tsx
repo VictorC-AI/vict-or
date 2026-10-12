@@ -90,8 +90,9 @@ export default function Abertura({ onPronto }: { onPronto: () => void }) {
       t,
       rx: reduzido ? 0.25 : 0.3 + Math.sin(t * 0.7) * 0.12,
       ry: reduzido ? -0.35 : -0.5 + Math.sin(t * 0.5) * 0.35,
-      onda: reduzido ? 0 : limita((t - 1) / 1.2) * 0.07,
-      montagem: reduzido ? 1 : limita(t / 1.3),
+      // a montagem acompanha o número do canto: o símbolo fecha junto com os 100%
+      onda: reduzido ? 0 : 0.015 + mostrado * 0.055,
+      montagem: reduzido ? 1 : mostrado,
       explosao: reduzido || fimEm.current === null ? 0 : limita((agora - fimEm.current) / EXPLOSAO),
       cores,
     })
