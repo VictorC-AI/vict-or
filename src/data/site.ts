@@ -981,7 +981,7 @@ export const contact = {
 export const nav = [
   { label: 'Serviços', href: '#servicos' },
   { label: 'Trabalhos', href: '#trabalhos' },
-  { label: 'Stack', href: '#stack' },
+  { label: 'Ferramentas', href: '#stack' },
   { label: 'Sobre', href: '#sobre' },
 ]
 
