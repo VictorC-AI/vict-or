@@ -1,69 +1,114 @@
+import { useEffect, useRef } from 'react'
 import { hero } from '../data/site'
-import GridField from './GridField'
+import { useInView, useReducedMotion } from '../lib/motion'
+import { desenharSimbolo, useCanvasAnimado } from '../lib/simbolo'
 
-export default function Hero() {
+const REPOUSO = { rx: 0.25, ry: -0.4 }
+const limita = (v: number) => Math.max(0, Math.min(1, v))
+
+/**
+ * Topo: o título entra linha por linha quando a abertura sai (`pronto`), e o
+ * símbolo fica vivo ao lado, ondulando, inclinado na direção do ponteiro.
+ * Um toque nele solta uma onda mais forte.
+ */
+export default function Hero({ pronto }: { pronto: boolean }) {
+  const reduzido = useReducedMotion()
+  const secao = useRef<HTMLElement | null>(null)
+  const visivel = useInView(secao)
+  const prontoEm = useRef<number | null>(null)
+  // inclinação atual e alvo, fora do estado do React: muda a cada quadro
+  const mov = useRef({ rx: REPOUSO.rx, ry: REPOUSO.ry, alvoRx: REPOUSO.rx, alvoRy: REPOUSO.ry, onda: 0 })
+
+  useEffect(() => {
+    if (pronto && prontoEm.current === null) prontoEm.current = performance.now()
+  }, [pronto])
+
+  const canvas = useCanvasAnimado(({ ctx, largura, altura }, cores, agora) => {
+    const m = mov.current
+    m.rx += (m.alvoRx - m.rx) * 0.06
+    m.ry += (m.alvoRy - m.ry) * 0.06
+    m.onda *= 0.97
+    const montagem = reduzido
+      ? 1
+      : prontoEm.current === null
+        ? 0
+        : limita((agora - prontoEm.current - 300) / 1200)
+    desenharSimbolo(ctx, {
+      cx: largura / 2,
+      cy: altura / 2,
+      tam: Math.min(largura, altura) * 0.66,
+      t: agora / 1000,
+      rx: reduzido ? REPOUSO.rx : m.rx,
+      ry: reduzido ? REPOUSO.ry : m.ry,
+      onda: reduzido ? 0 : 0.035 + m.onda * 0.09,
+      montagem,
+      explosao: 0,
+      cores,
+    })
+  }, visivel)
+
+  const segue = (e: React.PointerEvent) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    mov.current.alvoRy = ((e.clientX - r.left) / r.width - 0.5) * 1.1
+    mov.current.alvoRx = -((e.clientY - r.top) / r.height - 0.5) * 0.8
+  }
+  const solta = () => {
+    mov.current.alvoRx = REPOUSO.rx
+    mov.current.alvoRy = REPOUSO.ry
+  }
+
   return (
     <section
+      ref={secao}
       id="topo"
-      className="relative overflow-hidden pt-28 pb-0 sm:pt-36"
+      data-pronto={pronto ? '' : undefined}
+      onPointerMove={segue}
+      onPointerLeave={solta}
+      className="shell grid min-h-[100svh] items-center gap-6 pt-24 pb-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-10"
     >
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          maskImage:
-            'linear-gradient(100deg, transparent 6%, black 44%, black 100%)',
-          WebkitMaskImage:
-            'linear-gradient(100deg, transparent 6%, black 44%, black 100%)',
-        }}
-      >
-        <GridField className="absolute inset-0 h-full w-full" />
-      </div>
-
-      <div className="shell relative pb-14 sm:pb-20">
-        <h1 className="type-display text-mega rise max-w-[13ch]">
-          {hero.headline.map((line, i) => (
-            <span key={line} className="block">
-              {line}
-              {i === hero.headline.length - 1 && (
-                <span
-                  aria-hidden="true"
-                  className="ml-[0.09em] inline-block h-[0.66em] w-[0.16em] translate-y-[0.02em] bg-blue align-baseline"
-                />
-              )}
+      <div className="min-w-0">
+        <h1 className="type-display text-[clamp(2.75rem,5.6vw,6rem)] leading-[0.92]">
+          {hero.headline.map((linha, i) => (
+            <span key={linha} className="linha block overflow-hidden pb-[0.06em] whitespace-nowrap">
+              <span style={{ transitionDelay: `${i * 80}ms` }}>{linha}</span>
             </span>
           ))}
         </h1>
 
-        <div className="mt-9 grid gap-9 sm:mt-12 lg:grid-cols-[minmax(0,34rem)_auto] lg:items-end lg:gap-16">
-          <p className="text-lead rise rise-2 max-w-[46ch] text-ink/80">{hero.lead}</p>
+        <p
+          className="entra text-lead mt-7 max-w-[40ch] text-ink/75"
+          style={{ transitionDelay: '250ms' }}
+        >
+          {hero.lead}
+        </p>
 
-          <div className="rise rise-3 flex flex-wrap items-center gap-3 sm:gap-4">
-            <a
-              href={hero.primaryCta.href}
-              className="shadow-hard border-2 border-ink bg-ink px-6 py-3.5 text-base font-bold text-cream transition-transform duration-150 ease-[var(--ease-snap)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none active:translate-x-[6px] active:translate-y-[6px] sm:text-lg"
-            >
-              {hero.primaryCta.label}
-            </a>
-            <a
-              href={hero.secondaryCta.href}
-              className="border-2 border-ink px-6 py-3.5 text-base font-bold transition-[color,background-color,transform] duration-150 hover:bg-ink hover:text-cream active:scale-[0.98] sm:text-lg"
-            >
-              {hero.secondaryCta.label}
-            </a>
-          </div>
+        <div
+          className="entra mt-8 flex flex-wrap items-center gap-x-7 gap-y-4"
+          style={{ transitionDelay: '350ms' }}
+        >
+          <a
+            href={hero.primaryCta.href}
+            className="rounded-[9px] bg-blue px-6 py-4 text-lg font-bold text-bone transition-transform duration-150 active:scale-[0.98]"
+          >
+            {hero.primaryCta.label}
+          </a>
+          <a
+            href={hero.secondaryCta.href}
+            className="text-lg font-bold underline decoration-2 underline-offset-[6px] hover:text-blue"
+          >
+            {hero.secondaryCta.label}
+          </a>
         </div>
       </div>
 
-      <div className="shell relative">
-        <dl className="rule rise rise-4 grid grid-cols-2 gap-x-8 gap-y-6 py-7 sm:grid-cols-3 sm:py-8">
-          {hero.facts.map((f) => (
-            <div key={f.label}>
-              <dt className="text-sm text-muted">{f.label}</dt>
-              <dd className="mt-1 text-lg font-bold">{f.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <canvas
+        ref={canvas}
+        aria-hidden="true"
+        onPointerDown={() => {
+          mov.current.onda = 1
+        }}
+        className="aspect-square max-h-[56vh] w-full touch-pan-y lg:max-h-[78vh]"
+      />
     </section>
   )
 }

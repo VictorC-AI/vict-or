@@ -73,7 +73,7 @@ function paginasDosProjetos(): Plugin {
         descricaoCurta: lerAtributo(html, /<meta\s+name="description"\s+content="([^"]*)"/),
         descricao: lerAtributo(html, /property="og:description"\s+content="([^"]*)"/),
         imagem: lerAtributo(html, /property="og:image"\s+content="([^"]*)"/),
-        alt: 'vict.<OR> — Victor Carvalho, desenvolvedor full stack',
+        alt: 'vict.<OR>, Victor Carvalho, desenvolvedor full stack',
         url: SITE_URL,
         tipo: 'website',
       }
@@ -98,7 +98,7 @@ function paginasDosProjetos(): Plugin {
         writeFileSync(
           join(pasta, 'index.html'),
           comPrevia({
-            titulo: `${p.title} — vict.<OR>`,
+            titulo: `${p.title} | vict.<OR>`,
             descricaoCurta: p.summary,
             descricao: p.cover?.frase ? `${p.cover.frase} ${p.summary}` : p.summary,
             imagem: p.cover ? `${SITE_URL}share/og-${p.slug}.jpg` : `${SITE_URL}brand/og.png`,
