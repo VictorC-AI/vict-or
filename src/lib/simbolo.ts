@@ -149,14 +149,50 @@ export interface Quadro {
   montagem: number
   /** 0 = inteiro, 1 = pixels voaram contra a tela e sumiram */
   explosao: number
+  /** 0 = montado, 1 = pixels espalhados no espaço, sem sumir (o clique duplo) */
+  espalhar?: number
   cores: Cores
 }
+
+/**
+ * Estado da brincadeira com o símbolo (topo): onde está o ponteiro, as ondas
+ * soltas por toque e o quanto cada pixel foi empurrado. Um por canvas.
+ */
+export interface Interacao {
+  /** ponteiro em px do canvas; longe da tela quando não há ponteiro */
+  px: number
+  py: number
+  /** ondas soltas por toque: centro no símbolo (-0.5 a 0.5) e segundo em que nasceu */
+  ondas: { x: number; y: number; t: number }[]
+  empurraX: Float32Array
+  empurraY: Float32Array
+  /** 0 a 1: quanto o pixel saltou pra frente perto do ponteiro */
+  salto: Float32Array
+}
+
+export function criarInteracao(): Interacao {
+  const n = pixels().n
+  return {
+    px: -1e4,
+    py: -1e4,
+    ondas: [],
+    empurraX: new Float32Array(n),
+    empurraY: new Float32Array(n),
+    salto: new Float32Array(n),
+  }
+}
+
+/** quanto tempo uma onda de toque dura, em segundos */
+export const VIDA_DA_ONDA = 2.4
 
 const limita = (v: number) => Math.max(0, Math.min(1, v))
 const sai = (t: number) => 1 - Math.pow(1 - t, 3)
 
-/** desenha um quadro: onda em diagonal, giro em Y e X, perspectiva e luz pela profundidade */
-export function desenharSimbolo(ctx: CanvasRenderingContext2D, q: Quadro) {
+/**
+ * desenha um quadro: onda em diagonal, giro em Y e X, perspectiva e luz pela
+ * profundidade. Com `brinca`, soma as ondas de toque e os pixels fugindo do ponteiro.
+ */
+export function desenharSimbolo(ctx: CanvasRenderingContext2D, q: Quadro, brinca?: Interacao) {
   const p = pixels()
   const D = 2.6
   const cY = Math.cos(q.ry)
@@ -164,12 +200,29 @@ export function desenharSimbolo(ctx: CanvasRenderingContext2D, q: Quadro) {
   const cX = Math.cos(q.rx)
   const sX = Math.sin(q.rx)
   const lado0 = (q.tam / CELULAS) * 0.84
+  const raio = q.tam * 0.18
+  const espalhar = q.espalhar ?? 0
 
   for (let i = 0; i < p.n; i++) {
     let x = p.x[i]
     let y = p.y[i]
     let z = p.z[i] + q.onda * Math.sin((x * 1.1 + y * 0.8) * 7.5 - q.t * 2.6)
     let alfa = 1
+
+    if (brinca) {
+      // cada toque é uma pedra na água: o anel sai do ponto e vai perdendo força
+      for (const o of brinca.ondas) {
+        const idade = q.t - o.t
+        const frente = idade * 0.9
+        const d = Math.hypot(x - o.x, y - o.y)
+        if (d < frente) z += 0.1 * Math.exp(-idade * 1.6) * Math.sin((frente - d) * 26) * Math.exp(-(frente - d) * 3)
+      }
+    }
+    if (espalhar > 0) {
+      x += (p.ox[i] * 0.6 - x) * espalhar
+      y += (p.oy[i] * 0.6 - y) * espalhar
+      z += (p.atraso[i] - 0.5) * 1.4 * espalhar
+    }
 
     if (q.montagem < 1) {
       // cada pixel parte num momento diferente: a forma escorre em vez de pular
@@ -195,10 +248,31 @@ export function desenharSimbolo(ctx: CanvasRenderingContext2D, q: Quadro) {
     if (prof < 0.2 || alfa <= 0.01) continue
 
     const s = D / prof
-    const lado = lado0 * s
+    let sx = q.cx + x1 * q.tam * s
+    let sy = q.cy + y1 * q.tam * s
+    let lado = lado0 * s
+    let luz = -z2 * 30
+
+    if (brinca) {
+      // perto do ponteiro o pixel salta pra frente (maior e mais claro) e se afasta
+      const dx = sx - brinca.px
+      const dy = sy - brinca.py
+      const d = Math.hypot(dx, dy)
+      const forca = d < raio && d > 0.01 ? Math.pow(1 - d / raio, 2) : 0
+      const alvoX = forca ? (dx / d) * forca * q.tam * 0.12 : 0
+      const alvoY = forca ? (dy / d) * forca * q.tam * 0.12 : 0
+      brinca.empurraX[i] += (alvoX - brinca.empurraX[i]) * 0.16
+      brinca.empurraY[i] += (alvoY - brinca.empurraY[i]) * 0.16
+      brinca.salto[i] += (forca - brinca.salto[i]) * 0.16
+      sx += brinca.empurraX[i]
+      sy += brinca.empurraY[i]
+      lado *= 1 + brinca.salto[i] * 0.7
+      luz += brinca.salto[i] * 4
+    }
+
     ctx.globalAlpha = alfa
-    ctx.fillStyle = q.cores[p.tipo[i]][Math.round(Math.max(-4, Math.min(4, -z2 * 30))) + 4]
-    ctx.fillRect(q.cx + x1 * q.tam * s - lado / 2, q.cy + y1 * q.tam * s - lado / 2, lado, lado)
+    ctx.fillStyle = q.cores[p.tipo[i]][Math.round(Math.max(-4, Math.min(4, luz))) + 4]
+    ctx.fillRect(sx - lado / 2, sy - lado / 2, lado, lado)
   }
   ctx.globalAlpha = 1
 }
