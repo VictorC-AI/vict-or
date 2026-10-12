@@ -1,40 +1,50 @@
-import { about } from '../data/site'
-import Reveal from './Reveal'
+import { about, hero } from '../data/site'
 
+/**
+ * Sobre: o título e os fatos (que saíram do topo) numa coluna; o primeiro
+ * parágrafo em destaque, o resto em texto corrido e o jeito de trabalhar em
+ * linhas grandes, na outra.
+ */
 export default function About() {
+  const [primeiro, ...resto] = about.paragraphs
+
   return (
     <section id="sobre" className="bg-cream">
-      <div className="shell py-20 sm:py-28">
-        <div className="grid gap-12 lg:grid-cols-[1fr_22rem] lg:gap-20">
-          <Reveal>
-            <h2 className="type-display text-big">{about.title}</h2>
-            <div className="mt-8 space-y-6">
-              {about.paragraphs.map((p) => (
-                <p key={p.slice(0, 24)} className="text-lead max-w-[58ch] text-ink/85">
-                  {p}
-                </p>
-              ))}
-            </div>
-          </Reveal>
+      <div className="shell grid gap-12 py-20 sm:py-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-20">
+        <div>
+          <h2 className="type-display text-big">{about.title}</h2>
+          <dl className="mt-10 space-y-5">
+            {hero.facts.map((f) => (
+              <div key={f.label} className="flex flex-col-reverse">
+                <dt className="text-ink/65">{f.label}</dt>
+                <dd className="text-xl font-bold">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
 
-          <Reveal
-            as="aside"
-            ordem={2}
-            className="shadow-hard-blue self-start border-2 border-ink bg-paper p-7"
-          >
-            <h3 className="text-lg font-bold">Como eu trabalho</h3>
-            <ul className="mt-5 space-y-4">
-              {about.principles.map((item) => (
-                <li key={item} className="flex gap-3 leading-snug">
-                  <span
-                    aria-hidden="true"
-                    className="mt-[0.42em] size-2 shrink-0 bg-ink"
-                  />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+        <div className="min-w-0">
+          {primeiro && (
+            <p className="max-w-[34ch] text-[clamp(1.4rem,2.4vw,2rem)] leading-snug font-medium">
+              {primeiro}
+            </p>
+          )}
+          <div className="mt-8 space-y-5">
+            {resto.map((p) => (
+              <p key={p.slice(0, 24)} className="max-w-[60ch] text-lg leading-relaxed text-ink/75">
+                {p}
+              </p>
+            ))}
+          </div>
+
+          <h3 className="mt-14 text-sm font-bold text-ink/65">Como eu trabalho</h3>
+          <ul className="mt-3">
+            {about.principles.map((item) => (
+              <li key={item} className="type-wide border-t border-ink/15 py-4 text-xl font-bold sm:text-2xl">
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

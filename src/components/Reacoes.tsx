@@ -65,8 +65,8 @@ export function Curtir({
         onClick={clicar}
         className={`inline-flex items-center gap-2 border-2 border-ink font-bold transition-transform active:scale-[0.96] ${
           compacto
-            ? 'px-2.5 py-1 text-xs'
-            : 'shadow-hard-sm px-4 py-2 text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+            ? 'rounded-md px-2.5 py-1 text-xs'
+            : 'rounded-lg px-4 py-2 text-sm'
         } ${curtido ? 'bg-blue text-bone' : 'bg-paper hover:bg-blue-soft'}`}
       >
         <Coracao cheio={curtido} />
@@ -118,7 +118,7 @@ export default function Reacoes({ project }: { project: Project }) {
   }
 
   const campo =
-    'w-full border-2 border-ink bg-cream px-3.5 py-2.5 text-ink placeholder:text-muted focus:outline-none focus-visible:border-blue'
+    'w-full rounded-lg border-2 border-ink/40 bg-cream px-3.5 py-2.5 text-ink placeholder:text-muted focus:outline-none focus-visible:border-blue'
 
   return (
     <section className="rule mt-9 pt-7" aria-labelledby={`${id}-titulo`}>
@@ -172,7 +172,7 @@ export default function Reacoes({ project }: { project: Project }) {
             <button
               type="submit"
               disabled={estado === 'enviando'}
-              className="shadow-hard-sm border-2 border-ink bg-ink px-5 py-2.5 font-bold text-cream transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-60"
+              className="rounded-lg bg-ink px-5 py-2.5 font-bold text-cream transition-transform active:scale-[0.98] disabled:opacity-60"
             >
               {estado === 'enviando' ? 'Enviando…' : 'Enviar feedback'}
             </button>

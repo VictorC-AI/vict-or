@@ -62,7 +62,7 @@ export default function Header() {
             ))}
             <a
               href={contactCta.href}
-              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-[0.95rem] font-bold text-bone transition-transform duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+              className="rounded-lg bg-blue px-4 py-2.5 text-[0.95rem] font-bold text-bone transition-transform duration-150 active:scale-[0.98]"
             >
               {contactCta.label}
             </a>
@@ -73,7 +73,7 @@ export default function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="menu-mobile"
-            className="shadow-hard-sm flex size-10 items-center justify-center border-2 border-ink bg-paper md:hidden"
+            className="flex size-11 items-center justify-center rounded-lg border border-ink/25 bg-cream md:hidden"
           >
             <span className="sr-only">{open ? 'Fechar menu' : 'Abrir menu'}</span>
             <svg viewBox="0 0 20 20" className="size-5" aria-hidden="true">
@@ -82,14 +82,14 @@ export default function Header() {
                   d="M4 4l12 12M16 4L4 16"
                   stroke="currentColor"
                   strokeWidth="2.2"
-                  strokeLinecap="square"
+                  strokeLinecap="round"
                 />
               ) : (
                 <path
                   d="M3 6h14M3 13h14"
                   stroke="currentColor"
                   strokeWidth="2.2"
-                  strokeLinecap="square"
+                  strokeLinecap="round"
                 />
               )}
             </svg>

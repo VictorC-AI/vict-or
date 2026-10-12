@@ -187,32 +187,6 @@
 /* ------------------------------------------------------------------
    Animações: a entrada do topo e os blocos subindo ao rolar
    ------------------------------------------------------------------ */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 0.7em, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.rise {
-  animation: rise 0.75s var(--ease-snap) both;
-}
-
-/* o topo entra em sequência: título, texto, botões, fatos */
-.rise-2 {
-  animation-delay: 0.12s;
-}
-.rise-3 {
-  animation-delay: 0.22s;
-}
-.rise-4 {
-  animation-delay: 0.32s;
-}
-
 /* Topo: espera a abertura sair (data-pronto) pra entrar. O título sobe linha
    por linha de dentro de uma máscara; texto e botões vêm logo atrás. */
 .linha > span {
@@ -251,12 +225,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .reveal {
-    opacity: 1;
-    transform: none;
-  }
-
-  .rise {
-    animation: none;
     opacity: 1;
     transform: none;
   }

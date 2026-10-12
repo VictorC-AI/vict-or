@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react'
 import { contact, profile } from '../data/site'
-import Reveal from './Reveal'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -57,13 +56,13 @@ export default function Contact() {
   }
 
   const field =
-    'w-full border-2 border-cream/35 bg-transparent px-4 py-3 text-cream placeholder:text-cream/45 focus:border-cream focus:outline-none'
+    'w-full rounded-lg border-2 border-cream/40 bg-transparent px-4 py-3 text-cream placeholder:text-cream/60 focus:border-cream focus:outline-none'
 
   return (
     <section id="contato" className="tema-fixo on-dark bg-blue text-cream">
       <div className="shell py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-          <Reveal>
+          <div>
             <h2 className="type-display text-big">{contact.title}</h2>
             <p className="text-lead mt-6 max-w-[42ch] text-cream/85">
               {contact.lead}
@@ -87,7 +86,7 @@ export default function Contact() {
                 </a>
               )}
             </div>
-          </Reveal>
+          </div>
 
           <form onSubmit={handleSubmit} className="grid gap-5">
             {/* honeypot — invisível pra gente, irresistível pra robô */}
@@ -146,7 +145,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={state === 'sending'}
-                className="shadow-hard-cream border-2 border-cream bg-ink px-6 py-3.5 text-lg font-bold text-cream transition-transform duration-150 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none disabled:opacity-60"
+                className="rounded-lg bg-coal px-6 py-3.5 text-lg font-bold text-bone transition-transform duration-150 active:scale-[0.98] disabled:opacity-60"
               >
                 {state === 'sending' ? 'Enviando…' : 'Enviar mensagem'}
               </button>

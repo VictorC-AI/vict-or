@@ -16,7 +16,7 @@ const AVISO: Record<Resultado, string> = {
 }
 
 const BOTAO =
-  'shadow-hard-sm inline-flex items-center gap-2 border-2 border-ink bg-paper px-4 py-2 text-sm font-bold transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-60'
+  'inline-flex items-center gap-2 rounded-lg border-2 border-ink bg-paper px-4 py-2 text-sm font-bold transition-transform active:scale-[0.98] disabled:opacity-60'
 
 function IconeCompartilhar() {
   return (
@@ -213,7 +213,7 @@ export function CompartilharTrabalhos() {
             <button
               type="button"
               disabled={!valido || ocupado}
-              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-sm font-bold text-bone transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50"
+              className="rounded-lg bg-blue px-4 py-2 text-sm font-bold text-bone transition-transform active:scale-[0.98] disabled:opacity-50"
               onClick={async () => {
                 setOcupado(true)
                 try {

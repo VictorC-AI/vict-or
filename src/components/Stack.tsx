@@ -1,41 +1,35 @@
 import { stack } from '../data/site'
-import Reveal from './Reveal'
 
+/**
+ * Ferramentas como texto corrido em vez de etiquetas: a primeira lista grande,
+ * as seguintes (o que está aprendendo) menores e mais apagadas.
+ */
 export default function Stack() {
   return (
-    <section id="stack" className="bg-sand/45">
+    <section id="stack" className="on-dark bg-ink text-cream">
       <div className="shell py-20 sm:py-28">
-        <Reveal className="max-w-[48ch]">
-          <h2 className="type-display text-big">Ferramentas</h2>
-          <p className="text-lead mt-5 text-ink/75">
-            O que eu uso sem consultar documentação a cada linha, e o que estou
-            aprendendo agora. Este site foi escrito com a segunda lista.
-          </p>
-        </Reveal>
+        <h2 className="type-display text-big">Ferramentas</h2>
+        <p className="text-lead mt-5 max-w-[48ch] text-cream/70">
+          O que eu uso sem consultar documentação a cada linha, e o que estou
+          aprendendo agora. Este site foi escrito com a segunda lista.
+        </p>
 
-        <dl className="mt-12 sm:mt-16">
-          {stack.map((group) => (
-            <Reveal
-              key={group.group}
-              ordem={1}
-              className="rule grid gap-3 py-6 sm:grid-cols-[14rem_1fr] sm:gap-8 sm:py-7"
-            >
-              <dt className="type-display self-start text-xl sm:text-2xl">
-                {group.group}
-              </dt>
-              <dd className="flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="border-2 border-ink bg-paper px-3 py-1.5 text-[0.9rem] font-semibold"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </dd>
-            </Reveal>
+        <div className="mt-12 space-y-10 sm:mt-16">
+          {stack.map((group, i) => (
+            <div key={group.group}>
+              <h3 className="text-sm font-bold text-cream/60">{group.group}</h3>
+              <p
+                className={`mt-3 max-w-[36ch] font-mono leading-snug ${
+                  i === 0
+                    ? 'text-[clamp(1.5rem,3.2vw,2.6rem)] text-cream'
+                    : 'text-[clamp(1.2rem,2.2vw,1.75rem)] text-cream/70'
+                }`}
+              >
+                {group.items.join(', ')}
+              </p>
+            </div>
           ))}
-        </dl>
+        </div>
       </div>
     </section>
   )
