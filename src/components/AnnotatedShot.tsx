@@ -99,7 +99,7 @@ export function Markers({
                   ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
               }
               className={`absolute z-10 flex size-7 items-center justify-center rounded-full border-2 border-ink font-mono text-xs font-bold transition-[scale,background-color] ${
-                aceso ? 'scale-110 bg-ink text-cream' : 'bg-blue text-cream'
+                aceso ? 'scale-110 bg-ink text-cream' : 'bg-blue text-bone'
               }`}
               style={pos}
             >
@@ -149,7 +149,7 @@ export function Notes({
           >
             <span
               aria-hidden="true"
-              className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-blue font-mono text-[0.7rem] font-bold text-cream"
+              className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-blue font-mono text-[0.7rem] font-bold text-bone"
             >
               {n}
             </span>

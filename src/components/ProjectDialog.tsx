@@ -115,7 +115,7 @@ export default function ProjectDialog({
       onClick={(e) => {
         if (e.target === ref.current) onRequestClose()
       }}
-      className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 backdrop:bg-ink/70 backdrop:backdrop-blur-[2px]"
+      className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 backdrop:bg-coal/70 backdrop:backdrop-blur-[2px]"
     >
       {project && (
         <div className="flex min-h-full items-start justify-center p-0 sm:p-6">
@@ -340,7 +340,7 @@ export default function ProjectDialog({
                       href={l.href}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="shadow-hard-sm border-2 border-ink bg-blue px-5 py-2.5 font-bold text-cream transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                      className="shadow-hard-sm border-2 border-ink bg-blue px-5 py-2.5 font-bold text-bone transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                     >
                       {l.label}
                     </a>

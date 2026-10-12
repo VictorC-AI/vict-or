@@ -4,6 +4,7 @@ import { categoryLabel, projects, type Category, type Project } from '../data/si
 import ProjectCover from './ProjectCover'
 import ProjectDialog from './ProjectDialog'
 import CoverArt from './CoverArt'
+import Reveal from './Reveal'
 import { CompartilharTrabalhos } from './CompartilharStory'
 import { asset } from '../lib/asset'
 import { caminhoDoProjeto, caminhoDoSite, projetoNoEndereco } from '../lib/rota'
@@ -109,7 +110,7 @@ export default function Work() {
   // título da aba acompanha o detalhe aberto
   useEffect(() => {
     const original = document.title
-    if (open) document.title = `${open.project.title} — vict.<OR>`
+    if (open) document.title = `${open.project.title} | vict.<OR>`
     return () => {
       document.title = original
     }
@@ -151,7 +152,7 @@ export default function Work() {
     <section id="trabalhos" className="bg-cream">
       <div className="shell py-20 sm:py-28">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-[46ch]">
+          <Reveal className="max-w-[46ch]">
             <h2 className="type-display text-big">Trabalhos</h2>
             <p className="text-lead mt-5 text-ink/75">
               Clique em qualquer um para ver o problema, a decisão técnica e o
@@ -160,7 +161,7 @@ export default function Work() {
             <div className="mt-6">
               <CompartilharTrabalhos />
             </div>
-          </div>
+          </Reveal>
 
           {FILTERS.length > 2 && (
           <div
@@ -206,8 +207,10 @@ export default function Work() {
             const featured = wide
             const flipped = wide && pos % 2 === 1
             return (
-              <li
+              <Reveal
+                as="li"
                 key={p.slug}
+                ordem={pos}
                 className={
                   wide
                     ? `group relative md:col-span-2 md:grid md:items-center md:gap-10 ${
@@ -307,7 +310,7 @@ export default function Work() {
                     )}
                   </div>
                 </div>
-              </li>
+              </Reveal>
             )
           })}
         </ul>

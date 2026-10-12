@@ -49,6 +49,9 @@ export default function GridField({ className = '' }: { className?: string }) {
       heat = new Float32Array(cols * rows)
     }
 
+    // no modo escuro o pontinho de repouso vira creme (a tinta azul não muda)
+    const escuro = window.matchMedia('(prefers-color-scheme: dark)')
+
     const draw = () => {
       const w = canvas.width / dpr
       const h = canvas.height / dpr
@@ -65,7 +68,9 @@ export default function GridField({ className = '' }: { className?: string }) {
             ctx.fillRect(px, py, CELL, CELL)
           } else {
             // malha de repouso: pontinho quase invisível
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.07)'
+            ctx.fillStyle = escuro.matches
+              ? 'rgba(244, 239, 230, 0.09)'
+              : 'rgba(0, 0, 0, 0.07)'
             ctx.fillRect(px + CELL / 2 - 1, py + CELL / 2 - 1, 2, 2)
           }
         }

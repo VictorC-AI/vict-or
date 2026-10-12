@@ -176,13 +176,16 @@ export const profile = {
   whatsapp: '',
 }
 
+/** único rótulo de contato do site: menu, topo e menu do celular usam este */
+export const contactCta = { label: 'Começar um projeto', href: '#contato' }
+
 export const hero = {
   /** cada string é uma linha do título */
   headline: ['Eu construo', 'a coisa', 'inteira.'],
   lead:
-    'Sites e sistemas escritos do zero — do primeiro wireframe ao deploy. Sem tema comprado, sem página que demora seis segundos pra abrir.',
+    'Sites e sistemas escritos do zero, do primeiro wireframe ao deploy. Sem tema comprado, sem página que demora seis segundos pra abrir.',
   primaryCta: { label: 'Ver o que eu fiz', href: '#trabalhos' },
-  secondaryCta: { label: 'Começar um projeto', href: '#contato' },
+  secondaryCta: contactCta,
   facts: [
     { value: 'Unicamp FT', label: 'Sistemas de Informação' },
     { value: 'LAEG-BIO', label: 'bolsista no laboratório' },
@@ -221,7 +224,7 @@ export const services = [
     id: 'ecommerce' as Category,
     name: 'E-commerce',
     pitch:
-      'Loja com checkout, Pix e controle de estoque, montada na sua marca. Área que estou abrindo — o preço acompanha.',
+      'Loja com checkout, Pix e controle de estoque, montada na sua marca. Área que estou abrindo, e o preço acompanha.',
     includes: [
       'Checkout com Pix, cartão e boleto',
       'Controle de estoque e pedidos',
@@ -237,7 +240,7 @@ export const projects: Project[] = [
     slug: 'beacreative',
     title: 'BeaCreative',
     summary:
-      'Site institucional com portfólio, planos e agendamento integrado — do design ao deploy.',
+      'Site institucional com portfólio, planos e agendamento integrado, do design ao deploy.',
     year: '2026',
     category: 'site',
     status: 'No ar',
@@ -258,7 +261,7 @@ export const projects: Project[] = [
     features: [
       {
         title: 'Mostra o trabalho',
-        body: 'Oito cases com capa e vídeo, organizados em duas camadas — uma barra de stories no topo, pra quem quer passar o olho rápido, e cards grandes embaixo, pra quem quer se aprofundar. Clicou, abre o vídeo.',
+        body: 'Oito cases com capa e vídeo, organizados em duas camadas: uma barra de stories no topo, pra quem quer passar o olho rápido, e cards grandes embaixo, pra quem quer se aprofundar. Clicou, abre o vídeo.',
       },
       {
         title: 'Explica os planos sem conversa',
@@ -286,7 +289,7 @@ export const projects: Project[] = [
       },
       {
         title: 'Vídeos comprimidos na mão',
-        body: 'Os arquivos originais do portfólio eram grandes demais pra web. Passei todos por ffmpeg com -crf 32 e escala para 480p, e extraí as capas dos próprios vídeos — o peso caiu sem que a qualidade percebida mudasse no tamanho em que eles aparecem.',
+        body: 'Os arquivos originais do portfólio eram grandes demais pra web. Passei todos por ffmpeg com -crf 32 e escala para 480p, e extraí as capas dos próprios vídeos. O peso caiu sem que a qualidade percebida mudasse no tamanho em que eles aparecem.',
       },
       {
         title: 'Degradação prevista',
@@ -294,11 +297,11 @@ export const projects: Project[] = [
       },
       {
         title: 'Acessibilidade e movimento',
-        body: 'O carrossel de logos do topo respeita prefers-reduced-motion e pausa quando a aba sai de foco ou o bloco sai da tela — animação rodando fora da vista é bateria gasta à toa.',
+        body: 'O carrossel de logos do topo respeita prefers-reduced-motion e pausa quando a aba sai de foco ou o bloco sai da tela. Animação rodando fora da vista é bateria gasta à toa.',
       },
     ],
     infra:
-      'Deploy automático no Cloudflare Pages, disparado por push no GitHub. Domínio .com.br registrado no Registro.br com o DNS delegado pra Cloudflare. SSL em Full (strict), HTTPS forçado.\n\nCabeçalhos de segurança via arquivo _headers — HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy e X-Frame-Options — com uma Content-Security-Policy desenhada em cima do que o site realmente carrega, testada em preview antes de ir pra produção.',
+      'Deploy automático no Cloudflare Pages, disparado por push no GitHub. Domínio .com.br registrado no Registro.br com o DNS delegado pra Cloudflare. SSL em Full (strict), HTTPS forçado.\n\nCabeçalhos de segurança via arquivo _headers (HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy e X-Frame-Options), com uma Content-Security-Policy desenhada em cima do que o site realmente carrega, testada em preview antes de ir pra produção.',
     role: 'Tudo. Design, código, compressão de mídia, configuração de domínio e DNS, deploy, cabeçalhos de segurança, documentos de LGPD.',
     links: [{ label: 'Abrir o site', href: 'https://beacreativeco.com.br' }],
     image: '/shots/beacreative.jpg',
@@ -466,7 +469,7 @@ export const projects: Project[] = [
     problem:
       'Num laboratório de pesquisa, o estoque é compartilhado por técnicos e por alunos que se revezam a cada semestre. O controle dependia de memória e de anotações soltas. Ninguém sabia com certeza o que tinha, onde estava ou quando ia acabar. Reagentes venciam sem ninguém perceber, itens eram comprados em duplicidade, e a informação ia embora junto com cada aluno que saía.',
     solution:
-      'Um sistema sob medida para a rotina do laboratório — construído em cima de como as coisas são contadas na bancada, não de como um banco de dados prefere guardá-las.',
+      'Um sistema sob medida para a rotina do laboratório, construído em cima de como as coisas são contadas na bancada, não de como um banco de dados prefere guardá-las.',
     features: [
       {
         title: 'Cadastro pensado pra bancada',
@@ -474,11 +477,11 @@ export const projects: Project[] = [
       },
       {
         title: 'Localização física',
-        body: 'Os itens ficam agrupados por estante e prateleira, com filtros independentes. O sistema entende as várias formas de escrever o mesmo lugar — "Estante 2, prat. B" e "Estante 02 / Prateleira B" são o mesmo ponto.',
+        body: 'Os itens ficam agrupados por estante e prateleira, com filtros independentes. O sistema entende as várias formas de escrever o mesmo lugar: "Estante 2, prat. B" e "Estante 02 / Prateleira B" são o mesmo ponto.',
       },
       {
         title: 'Alertas que fazem sentido',
-        body: 'O estoque baixo considera a grandeza de cada item: 1 L não é pouco, 1 g pode ser. O mínimo é configurável por item, e o painel Panorama reúne o que precisa de atenção — estoque baixo, validade próxima e itens sem local.',
+        body: 'O estoque baixo considera a grandeza de cada item: 1 L não é pouco, 1 g pode ser. O mínimo é configurável por item, e o painel Panorama reúne o que precisa de atenção: estoque baixo, validade próxima e itens sem local.',
       },
       {
         title: 'Busca tolerante',
@@ -538,7 +541,7 @@ export const projects: Project[] = [
       {
         src: '/shots/laeg-ficha.jpg',
         caption:
-          'A ficha do item, no formato de rótulo de frasco — nível em proveta, mínimo configurável e baixa registrada ali mesmo',
+          'A ficha do item, no formato de rótulo de frasco, com nível em proveta, mínimo configurável e baixa registrada ali mesmo',
       },
       {
         src: '/shots/laeg-qr.jpg',
@@ -654,7 +657,7 @@ export const projects: Project[] = [
       {
         layout: 'duo',
         caption:
-          'A ficha do item, no formato de rótulo de frasco — nível em proveta, mínimo configurável e baixa registrada ali mesmo',
+          'A ficha do item, no formato de rótulo de frasco, com nível em proveta, mínimo configurável e baixa registrada ali mesmo',
         screens: [
           {
             device: 'laptop',
@@ -935,10 +938,10 @@ export const stack = [
 export const about = {
   title: 'Sobre',
   paragraphs: [
-    'Sou Victor. Curso Sistemas de Informação na Unicamp FT e sou bolsista no LAEG-BIO, laboratório de ecotoxicologia — foi lá dentro que nasceu o sistema de estoque que está aqui em cima, sem ninguém ter pedido.',
+    'Sou Victor. Curso Sistemas de Informação na Unicamp FT e sou bolsista no LAEG-BIO, laboratório de ecotoxicologia. Foi lá dentro que nasceu o sistema de estoque que está aqui em cima, sem ninguém ter pedido.',
     'Aprendo linguagem nova pelo gosto de aprender, e o assunto que mais me puxa é cibersegurança. Mas o motivo de eu escrever código é mais simples que isso: gosto de olhar uma dor de quem está perto e devolver alguma coisa que tire aquele peso. Foi assim no laboratório, foi assim no site da agência da Beatriz.',
     'Trabalho do início ao fim: converso com você pra entender o problema, desenho, escrevo, publico e fico por perto depois que sobe.',
-    'O próximo terreno que eu quero pisar é jogo de navegador. Ainda não entreguei nenhum — no dia em que entregar, ele aparece aqui em cima.',
+    'O próximo terreno que eu quero pisar é jogo de navegador. Ainda não entreguei nenhum. No dia em que entregar, ele aparece aqui em cima.',
   ],
   principles: [
     'Começo pela dor, não pela tecnologia',
@@ -951,7 +954,7 @@ export const about = {
 export const contact = {
   title: 'Vamos construir',
   lead:
-    'Me conte o que você quer resolver. Respondo em até um dia útil com um caminho, um prazo e um preço — ou com o motivo de eu não ser a pessoa certa pra esse projeto.',
+    'Me conte o que você quer resolver. Respondo em até um dia útil com um caminho, um prazo e um preço, ou com o motivo de eu não ser a pessoa certa pra esse projeto.',
   /**
    * Onde o formulário entrega a mensagem.
    *

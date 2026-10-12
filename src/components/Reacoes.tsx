@@ -76,7 +76,7 @@ export default function Reacoes({
           disabled={ocupado}
           onClick={alternar}
           className={`shadow-hard-sm inline-flex items-center gap-2 border-2 border-ink px-4 py-2 text-sm font-bold transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
-            curtido ? 'bg-blue text-cream' : 'bg-paper'
+            curtido ? 'bg-blue text-bone' : 'bg-paper'
           }`}
         >
           <Coracao cheio={curtido} />

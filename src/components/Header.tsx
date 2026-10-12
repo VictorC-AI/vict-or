@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react'
-import { nav } from '../data/site'
+import { useEffect, useRef, useState } from 'react'
+import { contactCta, nav } from '../data/site'
 import { Wordmark } from './Logo'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // marcador invisível nos primeiros 24px da página: quando ele sai da tela,
+  // o menu ganha fundo. Sem ouvir o scroll a cada quadro.
+  const marcador = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const el = marcador.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
   useEffect(() => {
@@ -22,6 +26,11 @@ export default function Header() {
 
   return (
     <>
+      <div
+        ref={marcador}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 h-6 w-px"
+      />
       <a
         href="#conteudo"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-ink focus:px-4 focus:py-2 focus:text-cream"
@@ -52,10 +61,10 @@ export default function Header() {
               </a>
             ))}
             <a
-              href="#contato"
-              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-[0.95rem] font-bold text-cream transition-transform duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+              href={contactCta.href}
+              className="shadow-hard-sm border-2 border-ink bg-blue px-4 py-2 text-[0.95rem] font-bold text-bone transition-transform duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
             >
-              Falar comigo
+              {contactCta.label}
             </a>
           </nav>
 
@@ -93,7 +102,7 @@ export default function Header() {
             className="border-t border-ink/15 bg-cream md:hidden"
           >
             <nav aria-label="Principal (celular)" className="shell flex flex-col py-3">
-              {[...nav, { label: 'Falar comigo', href: '#contato' }].map((item) => (
+              {[...nav, contactCta].map((item) => (
                 <a
                   key={item.href}
                   href={item.href}

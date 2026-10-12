@@ -104,7 +104,7 @@ export default function CoverArt({
 
   return (
     <div
-      className={`@container relative isolate overflow-hidden ${className}`}
+      className={`tema-fixo @container relative isolate overflow-hidden ${className}`}
       style={camada(nomeDaCapa(project.slug), 'capa', transicao)}
     >
       <div className="absolute inset-0 -z-10" style={{ backgroundColor: cover.palette.bg }}>
@@ -185,7 +185,7 @@ export function CoverBanner({ project }: { project: Project & { cover: Cover } }
   const { cover } = project
   const logo = cover.bannerLogo ?? project.logo
   return (
-    <div className="relative isolate flex aspect-[21/9] min-h-36 items-center justify-center overflow-hidden">
+    <div className="tema-fixo relative isolate flex aspect-[21/9] min-h-36 items-center justify-center overflow-hidden">
       <div className="absolute inset-0 -z-10" style={{ backgroundColor: cover.palette.bg }}>
         <svg
           viewBox={`0 0 160 ${ALTURA_BANNER}`}
