@@ -131,23 +131,26 @@ export default function Notebook({ project, className = '' }: { project: Project
     'aria-pressed': foco === device,
   })
 
-  // posição de cada parte por estado; a inclinação do ponteiro soma por cima
+  // Posição de cada parte por estado; a inclinação do ponteiro soma por cima.
+  // Nada cresce acima do tamanho real no foco: o navegador rasteriza a camada
+  // no tamanho de repouso e ampliar depois borra as telas. Então cada aparelho
+  // é desenhado no tamanho do zoom e fica reduzido (scale < 1) no repouso.
   const giro =
     foco === 'laptop'
-      ? { y: 0, x: 2, s: 1.06, k: 4 }
+      ? { y: 0, x: 2, s: 1, k: 4 }
       : foco === 'phone'
-        ? { y: -8, x: 4, s: 1, k: 6 }
-        : { y: -16, x: 6, s: 1, k: 14 }
+        ? { y: -8, x: 4, s: 0.94, k: 6 }
+        : { y: -16, x: 6, s: 0.94, k: 14 }
   const rig = `rotateY(calc(${giro.y}deg + var(--tx, 0) * ${giro.k}deg)) rotateX(calc(${giro.x}deg - var(--ty, 0) * ${giro.k * 0.7}deg)) scale(${giro.s})`
-  const notebook =
-    foco === 'phone' ? 'translateZ(-140px)' : foco === 'laptop' ? 'translateZ(40px)' : 'translateZ(0)'
+  const notebook = foco === 'phone' ? 'translateZ(-140px)' : 'translateZ(0)'
+  // o celular tem 1,5x o tamanho que aparece em repouso, ancorado no canto de baixo
   const celular =
     foco === 'phone'
-      ? 'translate3d(-95%, 6%, 200px) rotateY(16deg) scale(1.5)'
+      ? 'translate3d(-47%, 21%, 120px) rotateY(16deg)'
       : foco === 'laptop'
         ? // recua pro canto, mas continua ao alcance do mouse
-          'translate3d(28%, 22%, 120px) rotateY(-10deg) scale(0.82)'
-        : 'translate3d(0, 0, 80px)'
+          'translate3d(13%, 9%, 120px) rotateY(-10deg) scale(0.547)'
+        : 'translate3d(0, 0, 80px) scale(0.667)'
 
   return (
     <div
@@ -187,7 +190,7 @@ export default function Notebook({ project, className = '' }: { project: Project
             type="button"
             aria-label={`Ver as telas de ${project.title} no celular`}
             {...eventos('phone')}
-            className="absolute right-[2%] bottom-[8%] block w-[24%] max-w-[190px] cursor-zoom-in overflow-hidden rounded-[22px] border-[5px] border-coal bg-coal shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] transition-[transform,opacity] duration-700 ease-[var(--ease-snap)] sm:rounded-[30px] sm:border-[7px]"
+            className="absolute right-[2%] bottom-[8%] block w-[36%] max-w-[285px] origin-bottom-right cursor-zoom-in overflow-hidden rounded-[33px] border-[8px] border-coal bg-coal shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] transition-[transform,opacity] duration-700 ease-[var(--ease-snap)] sm:rounded-[45px] sm:border-[10px]"
             style={{ transform: celular }}
           >
             <span className="relative block aspect-[390/844]">
@@ -196,7 +199,8 @@ export default function Notebook({ project, className = '' }: { project: Project
                 atual={foco === 'phone' ? tela : 0}
                 carregar={carregar}
                 alt={`Tela do projeto ${project.title} no celular`}
-                sizes="(min-width: 640px) 290px, 40vw"
+                // pede mais do que o tamanho em tela: no foco a tela fica nítida
+                sizes="(min-width: 640px) 400px, 50vw"
               />
             </span>
           </button>
