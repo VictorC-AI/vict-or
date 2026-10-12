@@ -114,8 +114,13 @@ export type Cores = string[][]
 /** lê as cores do tema atual; chame de novo quando o tema mudar */
 export function coresDoTema(): Cores {
   const css = getComputedStyle(document.documentElement)
+  // o build encurta cores (#000000 vira #000) e pode trocar o formato: o
+  // próprio canvas normaliza qualquer cor CSS pra #rrggbb antes de ler
+  const conversor = document.createElement('canvas').getContext('2d')!
   const hex = (nome: string) => {
-    const h = css.getPropertyValue(nome).trim().replace('#', '')
+    conversor.fillStyle = '#000000'
+    conversor.fillStyle = css.getPropertyValue(nome).trim()
+    const h = String(conversor.fillStyle).replace('#', '')
     return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
   }
   const tons = ([r, g, b]: number[]) =>
