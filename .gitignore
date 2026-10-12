@@ -13,3 +13,5 @@ dist-ssr
 .agents/
 .claude/
 skills-lock.json
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
