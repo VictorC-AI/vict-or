@@ -348,17 +348,7 @@ export default function ProjectDialog({
                 </div>
               )}
 
-              <Reacoes
-                project={project}
-                onRecado={() => {
-                  onRequestClose()
-                  // depois que o detalhe fecha: o formulário já com o projeto
-                  setTimeout(
-                    () => window.dispatchEvent(new CustomEvent('deixar-recado', { detail: project.title })),
-                    450,
-                  )
-                }}
-              />
+              <Reacoes project={project} />
             </div>
           </article>
         </div>
