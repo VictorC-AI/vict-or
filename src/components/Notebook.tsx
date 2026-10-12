@@ -39,12 +39,15 @@ function Telas({
   carregar,
   alt,
   sizes,
+  inteira = false,
 }: {
   telas: Tela[]
   atual: number
   carregar: boolean
   alt: string
   sizes?: string
+  /** mostra a imagem inteira, sem cortar (prints de notebook têm proporções diferentes) */
+  inteira?: boolean
 }) {
   return (
     <>
@@ -58,7 +61,9 @@ function Telas({
             alt={i === atual ? alt : ''}
             aria-hidden={i === atual ? undefined : true}
             loading={i === 0 ? 'lazy' : 'eager'}
-            className={`absolute inset-0 size-full object-cover object-top transition-opacity duration-500 ${
+            className={`absolute inset-0 size-full transition-opacity duration-500 ${
+              inteira ? 'object-contain' : 'object-cover object-top'
+            } ${
               i === atual ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -173,12 +178,13 @@ export default function Notebook({ project, className = '' }: { project: Project
           style={{ transform: notebook }}
         >
           <span className="block rounded-t-2xl rounded-b-sm bg-coal p-2 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.55)] sm:p-3">
-            <span className="relative block aspect-[16/10] overflow-hidden rounded">
+            <span className="relative block aspect-[16/9] overflow-hidden rounded bg-coal">
               <Telas
                 telas={laptop}
                 atual={foco === 'laptop' ? tela : 0}
                 carregar={carregar}
                 alt={`Tela do projeto ${project.title} no notebook`}
+                inteira
               />
             </span>
           </span>
