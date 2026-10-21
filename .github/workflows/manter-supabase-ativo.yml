@@ -1,0 +1,37 @@
+name: Manter Supabase ativo
+
+# O plano grátis do Supabase pausa o projeto depois de 7 dias sem uso.
+# Todo dia este job faz uma leitura real no banco (a mesma
+# contagem de curtidas que o site pede ao abrir), o que conta como atividade.
+# Não grava nada e não manda e-mail.
+#
+# Atenção: o GitHub desliga workflows agendados de repositórios sem commit
+# há 60 dias. Se isso acontecer, ele avisa por e-mail; é só reativar em
+# Actions > "Manter Supabase ativo" > Enable workflow.
+
+on:
+  schedule:
+    # todo dia, 09:17 em Brasília (12:17 UTC), como o keep-alive do LAEG
+    - cron: '17 12 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Ler a contagem de curtidas
+        env:
+          # mesmos valores públicos de src/lib/curtidas.ts
+          SUPABASE_URL: https://qzynlhbsckwfrynhlhsh.supabase.co
+          CHAVE_PUBLICA: sb_publishable_ViWRVS_Qk_dlRev8svUsuw_8ULnMFTH
+        run: |
+          curl -sS --fail-with-body --retry 3 --retry-delay 20 \
+            -X POST "$SUPABASE_URL/rest/v1/rpc/contagem_curtidas" \
+            -H "apikey: $CHAVE_PUBLICA" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+          echo
+          echo "Supabase respondeu."
