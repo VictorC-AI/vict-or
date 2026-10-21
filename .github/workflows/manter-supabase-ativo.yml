@@ -1,7 +1,7 @@
 name: Manter Supabase ativo
 
 # O plano grátis do Supabase pausa o projeto depois de 7 dias sem uso.
-# Duas vezes por semana este job faz uma leitura real no banco (a mesma
+# Todo dia este job faz uma leitura real no banco (a mesma
 # contagem de curtidas que o site pede ao abrir), o que conta como atividade.
 # Não grava nada e não manda e-mail.
 #
@@ -11,8 +11,8 @@ name: Manter Supabase ativo
 
 on:
   schedule:
-    # segunda e quinta, 09:17 em Brasília (12:17 UTC)
-    - cron: '17 12 * * 1,4'
+    # todo dia, 09:17 em Brasília (12:17 UTC), como o keep-alive do LAEG
+    - cron: '17 12 * * *'
   workflow_dispatch:
 
 permissions: {}
